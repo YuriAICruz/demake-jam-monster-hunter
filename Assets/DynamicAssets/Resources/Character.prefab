@@ -113,6 +113,8 @@ MonoBehaviour:
     Velocity: {x: 0, y: 0}
     Position: {x: 0, y: 0}
     Grounded: 0
+    DodgeSpeed: 3
+    DodgeTime: 0.6
   Life:
     Hp: 0
     MaxHp: 1

@@ -79,5 +79,10 @@ namespace ActionBeat.Animation
             _animator.SetFloat("X", velocity.x);
             _animator.SetFloat("Y", velocity.y);
         }
+
+        public void Dodge(Vector2 direction)
+        {
+            _animator.SetTrigger("Dodge");
+        }
     }
 }
