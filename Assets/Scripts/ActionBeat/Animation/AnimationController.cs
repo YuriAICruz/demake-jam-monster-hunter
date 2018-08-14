@@ -84,5 +84,60 @@ namespace ActionBeat.Animation
         {
             _animator.SetTrigger("Dodge");
         }
+
+        public void WideSlash()
+        {
+            _animator.SetTrigger("WideSlash");
+        }
+
+        public void StationaryCombo()
+        {
+            _animator.SetTrigger("StationaryCombo");
+        }
+
+        public void FowardLungingAttackCombo()
+        {
+            _animator.SetTrigger("FowardLungingAttackCombo");
+        }
+
+        public void TrueChargedSlashCombo()
+        {
+            _animator.SetTrigger("TrueChargedSlashCombo");
+        }
+
+        public void ChargedSlash()
+        {
+            _animator.SetTrigger("ChargedSlash");
+        }
+
+        public void RisingSlash()
+        {
+            _animator.SetTrigger("RisingSlash");
+        }
+
+        public void OverheadSlash()
+        {
+            _animator.SetTrigger("OverheadSlash");
+        }
+
+        public void StationaryComboFinal()
+        {
+            _animator.SetTrigger("StationaryComboFinal");
+        }
+
+        public void FowardLungingAttackComboFinal()
+        {
+            _animator.SetTrigger("FowardLungingAttackComboFinal");
+        }
+
+        public void TrueChargedSlashComboFinal()
+        {
+            _animator.SetTrigger("TrueChargedSlashComboFinal");
+        }
+
+        public void Deffend(bool isOn)
+        {
+            _animator.SetBool("Deffend", isOn);
+        }
     }
 }

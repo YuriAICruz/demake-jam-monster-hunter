@@ -83,60 +83,71 @@ namespace ActionBeat
         private void WideSlash( )
         {
             ConsoleDebug.Log("WideSlash");
+            _animationController.WideSlash();
         }
 
         private void StationaryCombo( )
         {
             ConsoleDebug.Log("StationaryCombo");
+            _animationController.StationaryCombo();
         }
 
         private void FowardLungingAttackCombo( )
         {
             ConsoleDebug.Log("FowardLungingAttackCombo");
+            _animationController.FowardLungingAttackCombo();
         }
 
         private void TrueChargedSlashCombo( )
         {
             ConsoleDebug.Log("TrueChargedSlashCombo");
+            _animationController.TrueChargedSlashCombo();
         }
 
         private void ChargedSlash( )
         {
             ConsoleDebug.Log("ChargedSlash");
+            _animationController.ChargedSlash();
         }
 
         private void RisingSlash( )
         {
             ConsoleDebug.Log("RisingSlash");
+            _animationController.RisingSlash();
         }
 
         private void OverheadSlash( )
         {
             ConsoleDebug.Log("OverheadSlash");
+            _animationController.OverheadSlash();
         }
 
         private void StationaryComboFinal()
         {
             ConsoleDebug.Log("StationaryComboFinal");
+            _animationController.StationaryComboFinal();
         }
 
         private void FowardLungingAttackComboFinal()
         {
             ConsoleDebug.Log("FowardLungingAttackComboFinal");
+            _animationController.FowardLungingAttackComboFinal();
         }
 
         private void TrueChargedSlashComboFinal()
         {
             ConsoleDebug.Log("TrueChargedSlashComboFinal");
+            _animationController.TrueChargedSlashComboFinal();
         }
 
-        private void Deffend()
+        private void Deffend(bool isOn)
         {
+            _animationController.Deffend(isOn);
         }
 
         private void Dodge()
         {
-            if (Physics.Velocity.magnitude <= 0)
+            if (InputDispatcher.IsDeffending || Physics.Velocity.magnitude <= 0)
                 return;
             
             Stamina.DoAction(5);
