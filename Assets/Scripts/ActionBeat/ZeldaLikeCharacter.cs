@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using ActionBeat.Animation;
+using Debuging;
 using Physics;
 using Shooter;
 using Shooter.InputManage;
@@ -21,7 +22,10 @@ namespace ActionBeat
         private void Awake()
         {
             Life.Reset();
+            Life.OnDie += Die;
+
             Stamina.Reset();
+            Stamina.Stun += Stun;
         }
 
         void Start()
@@ -39,7 +43,16 @@ namespace ActionBeat
             if (InputDispatcher == null)
                 InputDispatcher = new ZeldaLikeInputDispatcher(this);
 
-            InputDispatcher.Attack += Attack;
+            InputDispatcher.OverheadSlash += OverheadSlash;
+            InputDispatcher.RisingSlash += RisingSlash;
+            InputDispatcher.ChargedSlash += ChargedSlash;
+            InputDispatcher.WideSlash += WideSlash;
+            InputDispatcher.TrueChargedSlashCombo += TrueChargedSlashCombo;
+            InputDispatcher.TrueChargedSlashComboFinal += TrueChargedSlashComboFinal;
+            InputDispatcher.FowardLungingAttackCombo += FowardLungingAttackCombo;
+            InputDispatcher.FowardLungingAttackComboFinal += FowardLungingAttackComboFinal;
+            InputDispatcher.StationaryCombo += StationaryCombo;
+            InputDispatcher.StationaryComboFinal += StationaryComboFinal;
             InputDispatcher.Deffend += Deffend;
             InputDispatcher.Dodge += Dodge;
             InputDispatcher.LeftStick += Move;
@@ -47,7 +60,13 @@ namespace ActionBeat
 
         private void OnDisable()
         {
-            InputDispatcher.Attack -= Attack;
+            InputDispatcher.OverheadSlash -= OverheadSlash;
+            InputDispatcher.RisingSlash -= RisingSlash;
+            InputDispatcher.ChargedSlash -= ChargedSlash;
+            InputDispatcher.WideSlash -= WideSlash;
+            InputDispatcher.TrueChargedSlashCombo -= TrueChargedSlashCombo;
+            InputDispatcher.FowardLungingAttackCombo -= FowardLungingAttackCombo;
+            InputDispatcher.StationaryCombo -= StationaryCombo;
             InputDispatcher.Deffend -= Deffend;
             InputDispatcher.Dodge -= Dodge;
             InputDispatcher.LeftStick -= Move;
@@ -59,21 +78,68 @@ namespace ActionBeat
             _animationController.SetVelocity(Physics.Velocity);
             transform.position = Physics.Position;
         }
+        
+
+        private void WideSlash( )
+        {
+            ConsoleDebug.Log("WideSlash");
+        }
+
+        private void StationaryCombo( )
+        {
+            ConsoleDebug.Log("StationaryCombo");
+        }
+
+        private void FowardLungingAttackCombo( )
+        {
+            ConsoleDebug.Log("FowardLungingAttackCombo");
+        }
+
+        private void TrueChargedSlashCombo( )
+        {
+            ConsoleDebug.Log("TrueChargedSlashCombo");
+        }
+
+        private void ChargedSlash( )
+        {
+            ConsoleDebug.Log("ChargedSlash");
+        }
+
+        private void RisingSlash( )
+        {
+            ConsoleDebug.Log("RisingSlash");
+        }
+
+        private void OverheadSlash( )
+        {
+            ConsoleDebug.Log("OverheadSlash");
+        }
+
+        private void StationaryComboFinal()
+        {
+            ConsoleDebug.Log("StationaryComboFinal");
+        }
+
+        private void FowardLungingAttackComboFinal()
+        {
+            ConsoleDebug.Log("FowardLungingAttackComboFinal");
+        }
+
+        private void TrueChargedSlashComboFinal()
+        {
+            ConsoleDebug.Log("TrueChargedSlashComboFinal");
+        }
 
         private void Deffend()
         {
-            Stamina.DoAction(1);
-        }
-
-        private void Attack()
-        {
-            Stamina.DoAction(5);
         }
 
         private void Dodge()
         {
             if (Physics.Velocity.magnitude <= 0)
                 return;
+            
+            Stamina.DoAction(5);
 
             InputDispatcher.BlockInputs();
             _isDodging = true;
@@ -93,6 +159,16 @@ namespace ActionBeat
         private void OnCollided(RaycastHit2D obj)
         {
             
+        }
+
+        private void Stun()
+        {
+            ConsoleDebug.LogError("Stun");
+        }
+
+        private void Die()
+        {
+            ConsoleDebug.LogError("Die");
         }
     }
 }
