@@ -116,6 +116,8 @@ MonoBehaviour:
     Grounded: 0
     DodgeSpeed: 1.6
     DodgeTime: 0.4
+    JumpSpeed: 1.8
+    JumpTime: 0.2
   Life:
     Hp: 0
     MaxHp: 1

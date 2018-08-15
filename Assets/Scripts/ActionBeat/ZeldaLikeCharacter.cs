@@ -18,6 +18,7 @@ namespace ActionBeat
         private ZeldaLikeInputDispatcher InputDispatcher;
 
         private bool _isDodging;
+        private bool _isJumping;
 
         private void Awake()
         {
@@ -36,6 +37,7 @@ namespace ActionBeat
             Physics.SetCollider(GetComponent<Collider2D>());
             Physics.OnCollisionEnter += OnCollided;
             Physics.OnTriggerEnter += OnTriggered;
+            Physics.OnJump += Jump;
         }
 
         private void OnEnable()
@@ -78,78 +80,98 @@ namespace ActionBeat
             _animationController.SetVelocity(Physics.Velocity);
             transform.position = Physics.Position;
         }
-        
 
-        private void WideSlash( )
+
+        private void WideSlash()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("WideSlash");
             _animationController.WideSlash();
         }
 
-        private void StationaryCombo( )
+        private void StationaryCombo()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("StationaryCombo");
             _animationController.StationaryCombo();
         }
 
-        private void FowardLungingAttackCombo( )
+        private void FowardLungingAttackCombo()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("FowardLungingAttackCombo");
             _animationController.FowardLungingAttackCombo();
         }
 
-        private void TrueChargedSlashCombo( )
+        private void TrueChargedSlashCombo()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("TrueChargedSlashCombo");
             _animationController.TrueChargedSlashCombo();
         }
 
-        private void ChargedSlash( )
+        private void ChargedSlash()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("ChargedSlash");
             _animationController.ChargedSlash();
         }
 
-        private void RisingSlash( )
+        private void RisingSlash()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("RisingSlash");
             _animationController.RisingSlash();
         }
 
-        private void OverheadSlash( )
+        private void OverheadSlash()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("OverheadSlash");
             _animationController.OverheadSlash();
         }
 
         private void StationaryComboFinal()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("StationaryComboFinal");
             _animationController.StationaryComboFinal();
         }
 
         private void FowardLungingAttackComboFinal()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("FowardLungingAttackComboFinal");
             _animationController.FowardLungingAttackComboFinal();
         }
 
         private void TrueChargedSlashComboFinal()
         {
+            if (!CanAttack()) return;
             ConsoleDebug.Log("TrueChargedSlashComboFinal");
             _animationController.TrueChargedSlashComboFinal();
         }
 
         private void Deffend(bool isOn)
         {
+            if (!CanDeffend()) return;
             _animationController.Deffend(isOn);
+        }
+
+
+        private void OnTriggered(RaycastHit2D obj)
+        {
+        }
+
+        private void OnCollided(RaycastHit2D obj)
+        {
         }
 
         private void Dodge()
         {
             if (InputDispatcher.IsDeffending || Physics.Velocity.magnitude <= 0)
                 return;
-            
+
             Stamina.DoAction(5);
 
             InputDispatcher.BlockInputs();
@@ -162,14 +184,31 @@ namespace ActionBeat
             _animationController.Dodge(Physics.Velocity);
         }
 
-        private void OnTriggered(RaycastHit2D obj)
+        bool CanAttack()
         {
-            
+            return !_isDodging && !_isJumping && !InputDispatcher.IsDeffending && !InputDispatcher.IsRunning;
         }
 
-        private void OnCollided(RaycastHit2D obj)
+        private bool CanDeffend()
         {
-            
+            return !_isDodging && !_isJumping && !InputDispatcher.IsRunning;
+        }
+
+        private void Jump(Vector2 dir)
+        {
+            if (Physics.Velocity.magnitude <= 0)
+                return;
+
+            InputDispatcher.BlockInputs();
+            _isJumping = true;
+            _animationController.Jump(_isJumping);
+
+            Physics.Jump(dir.normalized, () => { transform.position = Physics.Position; }, () =>
+            {
+                InputDispatcher.UnblockInputs();
+                _isJumping = false;
+                _animationController.Jump(_isJumping);
+            });
         }
 
         private void Stun()

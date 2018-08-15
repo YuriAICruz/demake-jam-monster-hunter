@@ -139,5 +139,10 @@ namespace ActionBeat.Animation
         {
             _animator.SetBool("Deffend", isOn);
         }
+
+        public void Jump(bool isOn)
+        {
+            _animator.SetBool("Jump", isOn);
+        }
     }
 }
