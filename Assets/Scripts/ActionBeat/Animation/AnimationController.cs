@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace ActionBeat.Animation
 {
@@ -8,6 +9,7 @@ namespace ActionBeat.Animation
         private readonly Transform _transform;
         private readonly Animator _animator;
         private Vector3 _lastPos;
+        public Vector2 Direction;
         private int _lastDir;
 
         public AnimationController(Transform transform, Animator animator)
@@ -76,9 +78,11 @@ namespace ActionBeat.Animation
             else
                 _transform.localScale = new Vector3(1, 1, 1);
 
+            Direction = velocity;
             _animator.SetFloat("X", velocity.x);
             _animator.SetFloat("Y", velocity.y);
         }
+
 
         public void Dodge(Vector2 direction)
         {

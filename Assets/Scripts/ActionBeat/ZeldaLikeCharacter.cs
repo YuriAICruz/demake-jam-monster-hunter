@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using ActionBeat.Animation;
 using Debuging;
 using Physics;
 using Shooter;
 using Shooter.InputManage;
 using UnityEngine;
+using Utils;
 
 namespace ActionBeat
 {
-    public class ZeldaLikeCharacter : MonoBehaviour
+    public class ZeldaLikeCharacter : MonoBehaviour, IDamageble
     {
         public ZeldaLikePhysics Physics;
         private AnimationController _animationController;
@@ -19,6 +21,7 @@ namespace ActionBeat
 
         private bool _isDodging;
         private bool _isJumping;
+        private Collider2D _collider;
 
         private void Awake()
         {
@@ -32,7 +35,7 @@ namespace ActionBeat
         void Start()
         {
             _animationController = new AnimationController(transform, GetComponent<Animator>());
-
+            
             Physics.SetPosition(transform.position);
             Physics.SetCollider(GetComponent<Collider2D>());
             Physics.OnCollisionEnter += OnCollided;
@@ -81,6 +84,60 @@ namespace ActionBeat
             transform.position = Physics.Position;
         }
 
+        void DoAttack(int damage, float size, float duration, bool isRight)
+        {
+            StartCoroutine(Attack(damage, size, duration, isRight));
+        }
+
+        IEnumerator Attack(int damage,float size, float duration, bool isRight)
+        {
+            var dir = (_animationController.Direction.normalized * size).Rotate(isRight ? 20 : -20);
+            Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
+
+            var mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
+            var hit = Physics2D.Raycast(transform.position, dir, size, mask);
+            
+            var hited = CheckAndDoDamage(damage, hit);
+            
+            yield return new WaitForSeconds(duration / 2);
+            
+             dir = (_animationController.Direction.normalized * size);
+            Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
+            
+            if (!hited)
+            {
+                hit = Physics2D.Raycast(transform.position, dir, size, mask);
+                hited = CheckAndDoDamage(damage, hit);
+            }
+
+            yield return new WaitForSeconds(duration / 2);
+
+            dir = (_animationController.Direction.normalized * size).Rotate(isRight ? -20 : 20);
+            Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
+
+            if (!hited)
+            {
+                hit = Physics2D.Raycast(transform.position, dir, size, mask);
+                hited = CheckAndDoDamage(damage, hit);
+            }
+        }
+
+        private bool CheckAndDoDamage(int damage, RaycastHit2D hit)
+        {
+            Debug.Log(hit.collider);
+            if (hit.collider != null)
+            {
+                Debug.Log(hit.collider.gameObject);
+                var dmg = hit.collider.GetComponent<IDamageble>();
+                if (dmg != null)
+                {
+                    dmg.DoDamage(damage);
+                    return true;
+                }
+            }
+            return false;
+        }
+
 
         private void WideSlash()
         {
@@ -127,6 +184,9 @@ namespace ActionBeat
         private void OverheadSlash()
         {
             if (!CanAttack()) return;
+
+            DoAttack(1, 1, 0.4f, false);
+
             ConsoleDebug.Log("OverheadSlash");
             _animationController.OverheadSlash();
         }
@@ -184,7 +244,7 @@ namespace ActionBeat
             _animationController.Dodge(Physics.Velocity);
         }
 
-        bool CanAttack()
+        private bool CanAttack()
         {
             return !_isDodging && !_isJumping && !InputDispatcher.IsDeffending && !InputDispatcher.IsRunning;
         }
@@ -219,6 +279,11 @@ namespace ActionBeat
         private void Die()
         {
             ConsoleDebug.LogError("Die");
+        }
+
+        public void DoDamage(int damage)
+        {
+            Life.ReceiveDamage(damage);
         }
     }
 }

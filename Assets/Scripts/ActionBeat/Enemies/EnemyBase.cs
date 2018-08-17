@@ -8,7 +8,7 @@ using Behaviour = Graphene.BehaviourTree.Behaviour;
 
 namespace ActionBeat.Enemies
 {
-    public class EnemyBase : MonoBehaviour
+    public class EnemyBase : MonoBehaviour, IDamageble
     {
         public enum BlackboardIds
         {
@@ -70,6 +70,11 @@ namespace ActionBeat.Enemies
 
         protected virtual  void Die()
         {
+        }
+
+        public void DoDamage(int damage)
+        {
+            Life.ReceiveDamage(damage);
         }
     }
 }

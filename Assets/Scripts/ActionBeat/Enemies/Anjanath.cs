@@ -26,9 +26,10 @@ namespace ActionBeat.Enemies
         public float AttackCloseDistance = 2;
         public float AttackBehindDistance = 2;
         public float AttackStag = 1;
-        
+
         private ZeldaLikeCharacter _player;
         private Vector3 _dir;
+        private bool _isDead;
 
         private event Behaviour.NodeResponseAction Test;
 
@@ -45,6 +46,12 @@ namespace ActionBeat.Enemies
             Physics.SetCollider(GetComponent<Collider2D>());
             Physics.OnCollisionEnter += OnCollided;
             Physics.OnTriggerEnter += OnTriggered;
+        }
+
+        protected override void Die()
+        {
+            Debug.LogError("Die");
+            _isDead = true;
         }
 
         protected override void CreateBehaviour()
@@ -113,11 +120,11 @@ namespace ActionBeat.Enemies
 
             _blackboard.Set((int) BlackboardIds.StartPath, new System.Action(StartPath), _tree.id);
             _blackboard.Set((int) BlackboardIds.MoveToTarget, new System.Action(MoveToTarget), _tree.id);
-            
+
             _blackboard.Set((int) BlackboardIds.AttackFarDistance, new System.Action(DoAttackFarDistance), _tree.id);
             _blackboard.Set((int) BlackboardIds.AttackBehindDistance, new System.Action(DoAttackBehindDistance), _tree.id);
             _blackboard.Set((int) BlackboardIds.AttackCloseDistance, new System.Action(DoAttackCloseDistance), _tree.id);
-            
+
             _blackboard.Set((int) BlackboardIds.ReturnToPath, new Behaviour.NodeResponseAction(ReturnToPath), _tree.id);
             _blackboard.Set((int) BlackboardIds.WalkOnPath, new Behaviour.NodeResponseAction(PathUpdate), _tree.id);
             _blackboard.Set((int) BlackboardIds.PlayerIsOnBack, new Behaviour.NodeResponseAction(PlayerIsOnBack), _tree.id);
@@ -127,14 +134,11 @@ namespace ActionBeat.Enemies
         {
             _isOnPath = false;
             _lastPathTime = _startTime;
-            
-            
-            Debug.Log("MTT");
-            
+
             Physics.Move(-transform.position + _player.transform.position);
 
             transform.position = Physics.Position;
-            
+
             LookTo();
 
             _lastPos = transform.position;
@@ -145,25 +149,22 @@ namespace ActionBeat.Enemies
             _startTime = Time.time;
             _lastPos = transform.position;
         }
-        
+
 
         private NodeStates ReturnToPath()
         {
             if (_isOnPath)
                 return NodeStates.Success;
-            
-            Debug.Log("RP");
-            
-            
+
             var dist = Path.Distance();
             var t = (Time.time - _lastPathTime) / (dist / Physics.Speed);
-            
+
             var pos = Path.GetPointOnCurve(t);
-            
+
             var dir = -transform.position + pos;
-            
+
             Physics.Move(dir);
-            
+
             transform.position = Physics.Position;
 
             if ((pos - transform.position).magnitude < 0.2f)
@@ -171,11 +172,11 @@ namespace ActionBeat.Enemies
                 _isOnPath = true;
                 _startTime = Time.time - (_lastPathTime - _startTime);
             }
-            
+
             LookTo();
 
             _lastPos = transform.position;
-            
+
             return NodeStates.Running;
         }
 
@@ -183,7 +184,7 @@ namespace ActionBeat.Enemies
         {
             if (!_isOnPath)
                 return NodeStates.Failure;
-            
+
             var dist = Path.Distance();
             if ((Time.time - _startTime) / (dist / Physics.Speed) < 1)
             {
@@ -253,7 +254,7 @@ namespace ActionBeat.Enemies
 
             return NodeStates.Failure;
         }
-        
+
 
         private void DoAttackCloseDistance()
         {
@@ -272,6 +273,8 @@ namespace ActionBeat.Enemies
 
         private void Update()
         {
+            if (_isDead) return;
+            
             _tree.Tick(this.gameObject, _blackboard);
         }
     }
