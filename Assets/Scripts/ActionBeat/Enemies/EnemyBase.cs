@@ -1,5 +1,6 @@
 ﻿using System;
 using ActionBeat.Animation;
+using ActionBeat.Presentation;
 using Graphene.BehaviourTree;
 using Physics;
 using Shooter;
@@ -75,6 +76,14 @@ namespace ActionBeat.Enemies
         public void DoDamage(int damage)
         {
             Life.ReceiveDamage(damage);
+            InstantiateDamage(damage);
+        }
+        
+
+        protected void InstantiateDamage(int damage)
+        {
+            var obj = Instantiate(Resources.Load<DamageInfo>("Damage"));
+            obj.SetDamage(damage, transform.position);
         }
     }
 }

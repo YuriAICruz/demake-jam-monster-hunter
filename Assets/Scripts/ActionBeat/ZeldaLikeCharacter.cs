@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ActionBeat.Animation;
 using Debuging;
@@ -10,6 +11,14 @@ using Utils;
 
 namespace ActionBeat
 {
+    [Serializable]
+    public struct AttackAtributes
+    {
+        public int Damage;
+        public float Distance, Duration;
+        public bool IsRight;
+    }
+    
     public class ZeldaLikeCharacter : MonoBehaviour, IDamageble
     {
         public ZeldaLikePhysics Physics;
@@ -22,6 +31,12 @@ namespace ActionBeat
         private bool _isDodging;
         private bool _isJumping;
         private Collider2D _collider;
+        
+        [Header("Attributes")]
+
+        public AttackAtributes OverheadSlashAtrib;
+
+        private int _mask;
 
         private void Awake()
         {
@@ -30,10 +45,16 @@ namespace ActionBeat
 
             Stamina.Reset();
             Stamina.Stun += Stun;
+            
         }
 
         void Start()
         {
+            _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
+            
+            _mask |= (1 << LayerMask.NameToLayer("Enemy"));
+            //Debug.Log((_mask & LayerMask.NameToLayer("Enemy")) == 0);
+            
             _animationController = new AnimationController(transform, GetComponent<Animator>());
             
             Physics.SetPosition(transform.position);
@@ -84,9 +105,9 @@ namespace ActionBeat
             transform.position = Physics.Position;
         }
 
-        void DoAttack(int damage, float size, float duration, bool isRight)
+        void DoAttack(AttackAtributes attrib)
         {
-            StartCoroutine(Attack(damage, size, duration, isRight));
+            StartCoroutine(Attack(attrib.Damage, attrib.Distance, attrib.Duration, attrib.IsRight));
         }
 
         IEnumerator Attack(int damage,float size, float duration, bool isRight)
@@ -94,8 +115,7 @@ namespace ActionBeat
             var dir = (_animationController.Direction.normalized * size).Rotate(isRight ? 20 : -20);
             Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
 
-            var mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
-            var hit = Physics2D.Raycast(transform.position, dir, size, mask);
+            var hit = Physics2D.Raycast(transform.position, dir, size, _mask);
             
             var hited = CheckAndDoDamage(damage, hit);
             
@@ -106,7 +126,7 @@ namespace ActionBeat
             
             if (!hited)
             {
-                hit = Physics2D.Raycast(transform.position, dir, size, mask);
+                hit = Physics2D.Raycast(transform.position, dir, size, _mask);
                 hited = CheckAndDoDamage(damage, hit);
             }
 
@@ -117,17 +137,15 @@ namespace ActionBeat
 
             if (!hited)
             {
-                hit = Physics2D.Raycast(transform.position, dir, size, mask);
+                hit = Physics2D.Raycast(transform.position, dir, size, _mask);
                 hited = CheckAndDoDamage(damage, hit);
             }
         }
 
         private bool CheckAndDoDamage(int damage, RaycastHit2D hit)
         {
-            Debug.Log(hit.collider);
             if (hit.collider != null)
             {
-                Debug.Log(hit.collider.gameObject);
                 var dmg = hit.collider.GetComponent<IDamageble>();
                 if (dmg != null)
                 {
@@ -185,7 +203,7 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
-            DoAttack(1, 1, 0.4f, false);
+            DoAttack(OverheadSlashAtrib);
 
             ConsoleDebug.Log("OverheadSlash");
             _animationController.OverheadSlash();

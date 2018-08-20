@@ -1,4 +1,6 @@
-﻿using Shooter;
+﻿using System.Xml;
+using ActionBeat.Presentation;
+using Shooter;
 using UnityEngine;
 
 namespace ActionBeat.Enemies
@@ -7,7 +9,13 @@ namespace ActionBeat.Enemies
     {
         public void DoDamage(int damage)
         {
-            Debug.Log("Damage " + damage);
+            InstantiateDamage(damage);
+        }
+
+        void InstantiateDamage(int damage)
+        {
+            var obj = Instantiate(Resources.Load<DamageInfo>("Damage"));
+            obj.SetDamage(damage, transform.position);
         }
     }
 }
