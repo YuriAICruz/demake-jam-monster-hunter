@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq.Expressions;
+using System.Xml;
 using Graphene.BehaviourTree;
 using Graphene.BehaviourTree.Actions;
 using Graphene.BehaviourTree.Composites;
 using Graphene.BehaviourTree.Conditions;
 using Graphene.BehaviourTree.Decorators;
 using Physics;
+using Shooter;
 using Splines;
 using UnityEngine;
 using Behaviour = Graphene.BehaviourTree.Behaviour;
@@ -23,17 +27,24 @@ namespace ActionBeat.Enemies
         private bool _isOnPath = true;
 
         [Header("Attack Distance")] public float EngageDistance = 5;
-        public float AttackFarDistance = 4;
-        public float AttackCloseDistance = 2;
-        public float AttackBehindDistance = 2;
 
-        [Header("Cooldown Distance")] public float CooldownFarDistance = 1;
-        public float CooldownBehindDistance = 1;
+        [Header("FarDistance")] public float AttackFarDistance = 4;
+        public float CooldownFarDistance = 1;
+        public AttackAtributes FarAtributes;
+
+        [Header("CloseDistance")] public float AttackCloseDistance = 2;
         public float CooldownCloseDistance = 1;
+        public AttackAtributes CloseAtributes;
+
+        [Header("BehindDistance")] public float AttackBehindDistance = 2;
+        public float CooldownBehindDistance = 1;
+        public AttackAtributes BehindAtributes;
 
         private ZeldaLikeCharacter _player;
+        private Vector3 _lastPlayerPos;
         private Vector3 _dir;
         private bool _isDead;
+        private int _mask;
 
         private event Behaviour.NodeResponseAction Test;
 
@@ -42,6 +53,10 @@ namespace ActionBeat.Enemies
             _iniPos = transform.position;
 
             _loop = Path.GetLoop();
+
+            _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
+
+            _mask |= (1 << LayerMask.NameToLayer("Player"));
         }
 
         protected override void SetupPhysics()
@@ -74,30 +89,30 @@ namespace ActionBeat.Enemies
                                 new MemoryPriority(
                                     new List<Node>
                                     {
-                                        new MemorySequence(new List<Node>()
+                                        new MemorySequence(new List<Node>() // FarDistance
                                             {
                                                 new CheckBool((int) BlackboardIds.IsAngry),
                                                 new CheckDistance(AttackFarDistance, (int) BlackboardIds.PlayerTarget),
                                                 new Wait(CooldownFarDistance),
                                                 new CallSystemAction((int) BlackboardIds.AttackFarDistance),
-                                                new Wait(CooldownFarDistance * 0.6f),
+                                                new Wait(FarAtributes.Duration),
                                             }
                                         ),
-                                        new MemorySequence(new List<Node>()
+                                        new MemorySequence(new List<Node>() // BehindDistance
                                             {
                                                 new CallSystemActionMemory((int) BlackboardIds.PlayerIsOnBack),
                                                 new CheckDistance(AttackBehindDistance, (int) BlackboardIds.PlayerTarget),
                                                 new Wait(CooldownBehindDistance),
                                                 new CallSystemAction((int) BlackboardIds.AttackBehindDistance),
-                                                new Wait(CooldownBehindDistance * 0.6f),
+                                                new Wait(BehindAtributes.Duration),
                                             }
                                         ),
-                                        new MemorySequence(new List<Node>()
+                                        new MemorySequence(new List<Node>() // CloseDistance
                                             {
                                                 new CheckDistance(AttackCloseDistance, (int) BlackboardIds.PlayerTarget),
                                                 new Wait(CooldownCloseDistance),
                                                 new CallSystemAction((int) BlackboardIds.AttackCloseDistance),
-                                                new Wait(CooldownBehindDistance * 0.6f),
+                                                new Wait(CloseAtributes.Duration),
                                             }
                                         ),
                                     }
@@ -152,6 +167,7 @@ namespace ActionBeat.Enemies
             _lastPathTime = _startTime;
 
             var dir = _player.transform.position - transform.position;
+            _lastPlayerPos = _player.transform.position;
             Physics.Move(dir.normalized);
 
             transform.position = Physics.Position;
@@ -276,17 +292,64 @@ namespace ActionBeat.Enemies
 
         private void DoAttackCloseDistance()
         {
-            Debug.Log("DoAttackCloseDistance");
+            StartCoroutine(DoAttackCloseDistanceRoutine());
+        }
+
+        IEnumerator DoAttackCloseDistanceRoutine()
+        {
+            var dir = (_lastPlayerPos - transform.position).normalized;
+            var time = 0f;
+
+            RaycastHit2D hit;
+
+            while (time <= FarAtributes.Duration)
+            {
+                Physics.Move(dir * (FarAtributes.Distance / FarAtributes.Duration));
+                transform.position = Physics.Position;
+
+                hit = Physics2D.Raycast(transform.position, dir, FarAtributes.Distance * (time / FarAtributes.Duration), _mask);
+                CheckAndDoDamage(FarAtributes.Damage, hit);
+
+                yield return new WaitForChangedResult();
+                time += Time.deltaTime;
+            }
+
+            hit = Physics2D.Raycast(transform.position, dir, FarAtributes.Distance, _mask);
+            CheckAndDoDamage(FarAtributes.Damage, hit);
+        }
+
+        private bool CheckAndDoDamage(int damage, RaycastHit2D hit)
+        {
+            if (hit.collider != null)
+            {
+                var dmg = hit.collider.GetComponent<IDamageble>();
+                if (dmg != null)
+                {
+                    dmg.DoDamage(damage);
+                    return true;
+                }
+            }
+            return false;
         }
 
         private void DoAttackBehindDistance()
         {
-            Debug.Log("DoAttackBehindDistance");
+            StartCoroutine(DoAttackBehindDistanceRoutine());
+        }
+
+        IEnumerator DoAttackBehindDistanceRoutine()
+        {
+            yield return new WaitForChangedResult();
         }
 
         private void DoAttackFarDistance()
         {
-            Debug.Log("DoAttackFarDistance");
+            StartCoroutine(DoAttackFarDistanceRoutine());
+        }
+
+        IEnumerator DoAttackFarDistanceRoutine()
+        {
+            yield return new WaitForChangedResult();
         }
 
         private void Update()

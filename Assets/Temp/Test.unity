@@ -154,63 +154,18 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
         type: 2}
-      propertyPath: Path._points.Array.data[2].y
-      value: -2.023267
+      propertyPath: CloseAtributes.Duration
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
         type: 2}
-      propertyPath: Path._points.Array.data[11].x
-      value: 0.5040555
+      propertyPath: CooldownCloseDistance
+      value: 0.16
       objectReference: {fileID: 0}
     - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
         type: 2}
-      propertyPath: Path._points.Array.data[11].y
-      value: 9.012201
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: Path._points.Array.data[12].x
-      value: 0.52245736
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: Path._points.Array.data[12].y
-      value: 12.101763
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: Path._points.Array.data[13].x
-      value: 3.441266
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: Path._points.Array.data[13].y
-      value: 12.030468
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: Path._points.Array.data[14].y
-      value: 12.768942
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: Physics.Speed
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: AttackStagFarDistance
+      propertyPath: CloseAtributes.Distance
       value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: AttackStagBehindDistance
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 114557811796932516, guid: 68de455c15c93704096395f2b1c4f40d,
-        type: 2}
-      propertyPath: AttackStagCloseDistance
-      value: 0.4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68de455c15c93704096395f2b1c4f40d, type: 2}
@@ -283,6 +238,61 @@ Prefab:
     - target: {fileID: 4987082956186202, guid: 91df57331150a0a4d98bd0d845d3c6f0, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: StationaryComboFinalAttrib.IsRight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: StationaryComboFinalAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: StationaryComboAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: FowardLungingAttackComboFinalAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: FowardLungingAttackComboAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: TrueChargedSlashComboFinalAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: TrueChargedSlashComboAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: WideSlashAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: ChargedSlashAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: RisingSlashAttrib.StaminaCost
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114011662066521080, guid: 91df57331150a0a4d98bd0d845d3c6f0,
+        type: 2}
+      propertyPath: OverheadSlashAttrib.StaminaCost
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 91df57331150a0a4d98bd0d845d3c6f0, type: 2}

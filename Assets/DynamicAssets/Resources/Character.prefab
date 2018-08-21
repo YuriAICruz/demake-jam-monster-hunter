@@ -121,6 +121,7 @@ MonoBehaviour:
   Life:
     Hp: 0
     MaxHp: 10
+  _invencibilityDuration: 0.8
   Stamina:
     Stm: 0
     MaxStm: 10
@@ -130,51 +131,61 @@ MonoBehaviour:
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   RisingSlashAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   ChargedSlashAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   WideSlashAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   TrueChargedSlashComboAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   TrueChargedSlashComboFinalAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   FowardLungingAttackComboAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   FowardLungingAttackComboFinalAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   StationaryComboAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
   StationaryComboFinalAttrib:
     Damage: 1
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 1
 --- !u!212 &212691281515251020
 SpriteRenderer:
   m_ObjectHideFlags: 1

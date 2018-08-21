@@ -183,7 +183,7 @@ MonoBehaviour:
     Hp: 0
     MaxHp: 100
   Physics:
-    Speed: 0.4
+    Speed: 0.6
     Velocity: {x: 0, y: 0}
     Position: {x: 0, y: 0}
     PositionZ: 0
@@ -197,7 +197,7 @@ MonoBehaviour:
     _points:
     - {x: 4.4448357, y: -2.067575, z: 0}
     - {x: -0.97723293, y: -1.9868383, z: 0}
-    - {x: 0.21625471, y: -2.0640147, z: 0}
+    - {x: 0.21625471, y: -2.023267, z: 0}
     - {x: -5.3484564, y: -2.035056, z: 0}
     - {x: -5.3459115, y: 0.8782139, z: 0}
     - {x: -5.343366, y: 2.5931387, z: 0}
@@ -206,10 +206,10 @@ MonoBehaviour:
     - {x: -2.2050714, y: 6.3269186, z: 0}
     - {x: 0.48711014, y: 6.3167944, z: 0}
     - {x: 0.5061207, y: 9.511129, z: 0}
-    - {x: 0.5251317, y: 9.0122, z: 0}
-    - {x: 0.6489148, y: 12.101762, z: 0}
-    - {x: 4.2000103, y: 12.030467, z: 0}
-    - {x: 2.983015, y: 13.127238, z: 0}
+    - {x: 0.5040555, y: 9.012201, z: 0}
+    - {x: 0.52245736, y: 12.101763, z: 0}
+    - {x: 3.441266, y: 12.030468, z: 0}
+    - {x: 2.983015, y: 12.768942, z: 0}
     - {x: 2.8665752, y: 4.392249, z: 0}
     - {x: 4.9517927, y: 4.334202, z: 0}
     - {x: 4.396571, y: 4.667017, z: 0}
@@ -218,9 +218,26 @@ MonoBehaviour:
     _modes: 00000000000000000000000000000000000000000000000000000000
   EngageDistance: 2
   AttackFarDistance: 2
+  CooldownFarDistance: 1
+  FarAtributes:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
   AttackCloseDistance: 0.5
+  CooldownCloseDistance: 0.1
+  CloseAtributes:
+    Damage: 1
+    Distance: 0.6
+    Duration: 0.2
+    IsRight: 0
   AttackBehindDistance: 0.6
-  AttackStag: 1
+  CooldownBehindDistance: 1
+  BehindAtributes:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
 --- !u!212 &212636294057727574
 SpriteRenderer:
   m_ObjectHideFlags: 1

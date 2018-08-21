@@ -10,7 +10,14 @@
             <e p="Animation" t="Include">
               <e p="AnimationController.cs" t="Include" />
             </e>
+            <e p="BasicCamera.cs" t="Include" />
+            <e p="Enemies" t="Include">
+              <e p="Anjanath.cs" t="Include" />
+              <e p="EnemyBase.cs" t="Include" />
+              <e p="SimpleBox.cs" t="Include" />
+            </e>
             <e p="Presentation" t="Include">
+              <e p="DamageInfo.cs" t="Include" />
               <e p="GroundInfo.cs" t="Include" />
               <e p="HealthBar.cs" t="Include" />
               <e p="StaminaBar.cs" t="Include" />
@@ -107,6 +114,7 @@
                 <e p="SpawnPoint.cs" t="Include" />
               </e>
               <e p="Physics" t="Include">
+                <e p="AnjanathPhysics.cs" t="Include" />
                 <e p="CharacterPhysics.cs" t="Include" />
                 <e p="GroundSystem" t="Include">
                   <e p="Ground.cs" t="Include" />
@@ -116,6 +124,7 @@
                 <e p="SideShooterPhysics.cs" t="Include" />
                 <e p="Tester.cs" t="Include" />
                 <e p="TesterPhysics.cs" t="Include" />
+                <e p="ZeldaLikeEnemyPhysics.cs" t="Include" />
                 <e p="ZeldaLikePhysics.cs" t="Include" />
               </e>
               <e p="PlanetaryMotion" t="Include">
@@ -228,9 +237,12 @@
                 <e p="TextView.cs" t="Include" />
               </e>
               <e p="Utils" t="Include">
-                <e p="Editor" t="Include" />
+                <e p="Editor" t="Include">
+                  <e p="EnumFlagsAttributeDrawer.cs" t="Include" />
+                </e>
                 <e p="InterfaceHelper.cs" t="Include" />
                 <e p="ListShuffle.cs" t="Include" />
+                <e p="Vector2Extension.cs" t="Include" />
               </e>
               <e p="WalkingCharTemp.cs" t="Include" />
             </e>
@@ -248,6 +260,7 @@
                     <e p="Action" t="Include">
                       <e p="Action.cs" t="Include" />
                       <e p="CallSystemAction.cs" t="Include" />
+                      <e p="CallSystemActionMemory.cs" t="Include" />
                       <e p="CallSystemActionWithResponse.cs" t="Include" />
                       <e p="ChangeColor.cs" t="Include" />
                       <e p="ChangePosition.cs" t="Include" />

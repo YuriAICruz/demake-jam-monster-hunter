@@ -17,14 +17,20 @@ namespace ActionBeat
         public int Damage;
         public float Distance, Duration;
         public bool IsRight;
+        public int StaminaCost;
     }
-    
+
     public class ZeldaLikeCharacter : MonoBehaviour, IDamageble
     {
-        public ZeldaLikePhysics Physics;
+        [Space] public ZeldaLikePhysics Physics;
         private AnimationController _animationController;
-        public Life Life;
-        public Stamina Stamina;
+
+
+        [Space] public Life Life;
+        [SerializeField] private float _invencibilityDuration;
+        private float _lastHit;
+
+        [Space] public Stamina Stamina;
 
         private ZeldaLikeInputDispatcher _inputDispatcher;
 
@@ -32,10 +38,8 @@ namespace ActionBeat
         private bool _isJumping;
         private Collider2D _collider;
         private int _mask;
-        
-        [Header("Attributes")]
 
-        public AttackAtributes OverheadSlashAttrib;
+        [Header("Attributes")] public AttackAtributes OverheadSlashAttrib;
         public AttackAtributes RisingSlashAttrib;
         public AttackAtributes ChargedSlashAttrib;
         public AttackAtributes WideSlashAttrib;
@@ -54,17 +58,16 @@ namespace ActionBeat
 
             Stamina.Reset();
             Stamina.Stun += Stun;
-            
         }
 
         void Start()
         {
             _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
-            
+
             _mask |= (1 << LayerMask.NameToLayer("Enemy"));
-            
+
             _animationController = new AnimationController(transform, GetComponent<Animator>());
-            
+
             Physics.SetPosition(transform.position);
             Physics.SetCollider(GetComponent<Collider2D>());
             Physics.OnCollisionEnter += OnCollided;
@@ -118,20 +121,20 @@ namespace ActionBeat
             StartCoroutine(Attack(attrib.Damage, attrib.Distance, attrib.Duration, attrib.IsRight));
         }
 
-        IEnumerator Attack(int damage,float size, float duration, bool isRight)
+        IEnumerator Attack(int damage, float size, float duration, bool isRight)
         {
             var dir = (_animationController.Direction.normalized * size).Rotate(isRight ? 20 : -20);
             Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
 
             var hit = Physics2D.Raycast(transform.position, dir, size, _mask);
-            
+
             var hited = CheckAndDoDamage(damage, hit);
-            
+
             yield return new WaitForSeconds(duration / 2);
-            
-             dir = (_animationController.Direction.normalized * size);
+
+            dir = (_animationController.Direction.normalized * size);
             Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
-            
+
             if (!hited)
             {
                 hit = Physics2D.Raycast(transform.position, dir, size, _mask);
@@ -169,8 +172,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
-            DoAttack(WideSlashAttrib);
+            if (!Stamina.DoAction(WideSlashAttrib.StaminaCost)) return;
             
+            DoAttack(WideSlashAttrib);
+
             _animationController.WideSlash();
         }
 
@@ -178,8 +183,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(StationaryComboAttrib.StaminaCost)) return;
+
             DoAttack(StationaryComboAttrib);
-            
+
             _animationController.StationaryCombo();
         }
 
@@ -187,8 +194,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(FowardLungingAttackComboAttrib.StaminaCost)) return;
+
             DoAttack(FowardLungingAttackComboAttrib);
-            
+
             _animationController.FowardLungingAttackCombo();
         }
 
@@ -196,8 +205,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(TrueChargedSlashComboAttrib.StaminaCost)) return;
+
             DoAttack(TrueChargedSlashComboAttrib);
-            
+
             _animationController.TrueChargedSlashCombo();
         }
 
@@ -205,8 +216,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(ChargedSlashAttrib.StaminaCost)) return;
+
             DoAttack(ChargedSlashAttrib);
-            
+
             _animationController.ChargedSlash();
         }
 
@@ -214,8 +227,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(RisingSlashAttrib.StaminaCost)) return;
+
             DoAttack(RisingSlashAttrib);
-            
+
             _animationController.RisingSlash();
         }
 
@@ -223,8 +238,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(OverheadSlashAttrib.StaminaCost)) return;
+
             DoAttack(OverheadSlashAttrib);
-            
+
             _animationController.OverheadSlash();
         }
 
@@ -232,8 +249,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(StationaryComboFinalAttrib.StaminaCost)) return;
+
             DoAttack(StationaryComboFinalAttrib);
-            
+
             _animationController.StationaryComboFinal();
         }
 
@@ -241,8 +260,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(FowardLungingAttackComboFinalAttrib.StaminaCost)) return;
+
             DoAttack(FowardLungingAttackComboFinalAttrib);
-            
+
             _animationController.FowardLungingAttackComboFinal();
         }
 
@@ -250,8 +271,10 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
+            if (!Stamina.DoAction(TrueChargedSlashComboFinalAttrib.StaminaCost)) return;
+
             DoAttack(TrueChargedSlashComboFinalAttrib);
-            
+
             _animationController.TrueChargedSlashComboFinal();
         }
 
@@ -269,6 +292,7 @@ namespace ActionBeat
         private void OnCollided(RaycastHit2D obj)
         {
         }
+        
 
         private void Dodge()
         {
@@ -324,8 +348,13 @@ namespace ActionBeat
             ConsoleDebug.LogError("Die");
         }
 
+        
         public void DoDamage(int damage)
         {
+            if (_isDodging || Time.time <= _lastHit + _invencibilityDuration) return;
+
+            _lastHit = Time.time;
+
             Life.ReceiveDamage(damage);
         }
     }
