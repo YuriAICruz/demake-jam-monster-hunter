@@ -75,7 +75,7 @@ namespace ActionBeat.Enemies
         {
         }
 
-        public void DoDamage(int damage)
+        public virtual void DoDamage(int damage)
         {
             Life.ReceiveDamage(damage);
             InstantiateDamage(damage);

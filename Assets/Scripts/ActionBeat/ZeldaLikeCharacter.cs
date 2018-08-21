@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using ActionBeat.Animation;
 using Debuging;
 using Physics;
@@ -25,6 +26,8 @@ namespace ActionBeat
         [Space] public ZeldaLikePhysics Physics;
         private AnimationController _animationController;
 
+        public Action OnOpenMap, OnCloseMap;
+
 
         [Space] public Life Life;
         [SerializeField] private float _invencibilityDuration;
@@ -36,6 +39,8 @@ namespace ActionBeat
 
         private bool _isDodging;
         private bool _isJumping;
+        private bool _canInteract;
+        private bool _mapOpen;
         private Collider2D _collider;
         private int _mask;
 
@@ -49,6 +54,7 @@ namespace ActionBeat
         public AttackAtributes FowardLungingAttackComboFinalAttrib;
         public AttackAtributes StationaryComboAttrib;
         public AttackAtributes StationaryComboFinalAttrib;
+        private IInteractible _interactible;
 
 
         private void Awake()
@@ -60,7 +66,7 @@ namespace ActionBeat
             Stamina.Stun += Stun;
         }
 
-        void Start()
+        private void Start()
         {
             _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
 
@@ -93,6 +99,8 @@ namespace ActionBeat
             _inputDispatcher.Deffend += Deffend;
             _inputDispatcher.Dodge += Dodge;
             _inputDispatcher.LeftStick += Move;
+            _inputDispatcher.Interact += Interact;
+            _inputDispatcher.MapToggle += MapToggle;
         }
 
         private void OnDisable()
@@ -107,6 +115,8 @@ namespace ActionBeat
             _inputDispatcher.Deffend -= Deffend;
             _inputDispatcher.Dodge -= Dodge;
             _inputDispatcher.LeftStick -= Move;
+            _inputDispatcher.Interact -= Interact;
+            _inputDispatcher.MapToggle -= MapToggle;
         }
 
         private void Move(Vector2 dir)
@@ -170,6 +180,8 @@ namespace ActionBeat
 
         private void WideSlash()
         {
+            if(_canInteract) return;
+            
             if (!CanAttack()) return;
 
             if (!Stamina.DoAction(WideSlashAttrib.StaminaCost)) return;
@@ -285,8 +297,12 @@ namespace ActionBeat
         }
 
 
-        private void OnTriggered(RaycastHit2D obj)
+        private void OnTriggered(RaycastHit2D hit)
         {
+            _interactible = hit.transform.GetComponent<IInteractible>();
+            if(_interactible == null) return;
+
+            _canInteract = true;
         }
 
         private void OnCollided(RaycastHit2D obj)
@@ -346,6 +362,40 @@ namespace ActionBeat
         private void Die()
         {
             ConsoleDebug.LogError("Die");
+        }
+
+        private void MapToggle()
+        {
+            if (_mapOpen)
+            {
+                OpenMap();
+                _mapOpen = false;
+            }
+            else
+            {
+                CloseMap();
+                _mapOpen = true;
+            }
+        }
+
+        private void OpenMap()
+        {
+            // _inputDispatcher.BlockInputs();
+            if (OnOpenMap != null) OnOpenMap();
+        }
+
+        private void CloseMap()
+        {
+            // _inputDispatcher.UnblockInputs();
+            if (OnCloseMap != null) OnCloseMap();
+        }
+
+        private void Interact()
+        {
+            if(!_canInteract || _interactible == null) return;
+            
+            _interactible.Interact();
+            _interactible = null;
         }
 
         

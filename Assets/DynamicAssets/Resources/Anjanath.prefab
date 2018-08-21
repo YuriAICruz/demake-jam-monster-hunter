@@ -181,7 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Life:
     Hp: 0
-    MaxHp: 100
+    MaxHp: 2
   Physics:
     Speed: 0.6
     Velocity: {x: 0, y: 0}
@@ -217,27 +217,30 @@ MonoBehaviour:
     IsInitialized: 0
     _modes: 00000000000000000000000000000000000000000000000000000000
   EngageDistance: 2
-  AttackFarDistance: 2
-  CooldownFarDistance: 1
+  AttackFarDistance: 1.4
+  FarCooldown: 0.8
   FarAtributes:
-    Damage: 1
-    Distance: 0.4
+    Damage: 100
+    Distance: 1.6
     Duration: 0.4
     IsRight: 0
+    StaminaCost: 0
   AttackCloseDistance: 0.5
-  CooldownCloseDistance: 0.1
+  CloseCooldown: 0.16
   CloseAtributes:
     Damage: 1
-    Distance: 0.6
-    Duration: 0.2
+    Distance: 0.8
+    Duration: 0.12
     IsRight: 0
+    StaminaCost: 0
   AttackBehindDistance: 0.6
-  CooldownBehindDistance: 1
+  BehindCooldown: 0.4
   BehindAtributes:
-    Damage: 1
-    Distance: 0.4
-    Duration: 0.4
+    Damage: 2
+    Distance: 0.8
+    Duration: 1
     IsRight: 0
+    StaminaCost: 0
 --- !u!212 &212636294057727574
 SpriteRenderer:
   m_ObjectHideFlags: 1

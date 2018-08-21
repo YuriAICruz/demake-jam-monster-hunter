@@ -16,10 +16,13 @@
               <e p="EnemyBase.cs" t="Include" />
               <e p="SimpleBox.cs" t="Include" />
             </e>
+            <e p="IInteractible.cs" t="Include" />
             <e p="Presentation" t="Include">
               <e p="DamageInfo.cs" t="Include" />
               <e p="GroundInfo.cs" t="Include" />
               <e p="HealthBar.cs" t="Include" />
+              <e p="Map.cs" t="Include" />
+              <e p="MapPlayer.cs" t="Include" />
               <e p="StaminaBar.cs" t="Include" />
             </e>
             <e p="ZeldaLikeCharacter.cs" t="Include" />
