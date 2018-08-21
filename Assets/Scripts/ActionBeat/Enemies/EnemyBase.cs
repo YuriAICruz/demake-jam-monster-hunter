@@ -23,7 +23,9 @@ namespace ActionBeat.Enemies
             AttackBehindDistance = 8,
             AttackFarDistance = 9,
             ReturnToPath = 10,
-            Test = 99,
+            True = 98,
+            False = 99,
+
             
         }
         private AnimationController _animationController;

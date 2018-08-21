@@ -4,6 +4,7 @@ using Graphene.BehaviourTree;
 using Graphene.BehaviourTree.Actions;
 using Graphene.BehaviourTree.Composites;
 using Graphene.BehaviourTree.Conditions;
+using Graphene.BehaviourTree.Decorators;
 using Physics;
 using Splines;
 using UnityEngine;
@@ -21,11 +22,14 @@ namespace ActionBeat.Enemies
         private bool _loop;
         private bool _isOnPath = true;
 
-        public float EngageDistance = 5;
+        [Header("Attack Distance")] public float EngageDistance = 5;
         public float AttackFarDistance = 4;
         public float AttackCloseDistance = 2;
         public float AttackBehindDistance = 2;
-        public float AttackStag = 1;
+
+        [Header("Cooldown Distance")] public float CooldownFarDistance = 1;
+        public float CooldownBehindDistance = 1;
+        public float CooldownCloseDistance = 1;
 
         private ZeldaLikeCharacter _player;
         private Vector3 _dir;
@@ -61,47 +65,57 @@ namespace ActionBeat.Enemies
             _tree.root = new Priority(
                 new List<Node>
                 {
-                    new Sequence(new List<Node>() // Engage Player
+                    new MemorySequence(new List<Node>() // Engage Player
                     {
                         new CheckDistance(EngageDistance, (int) BlackboardIds.PlayerTarget),
-                        new CallSystemAction((int) BlackboardIds.MoveToTarget),
-                        new MemorySequence(new List<Node>()
+                        new MemoryPriority(
+                            new List<Node>
                             {
-                                new Priority(
+                                new MemoryPriority(
                                     new List<Node>
                                     {
-                                        new Sequence(new List<Node>()
+                                        new MemorySequence(new List<Node>()
                                             {
                                                 new CheckBool((int) BlackboardIds.IsAngry),
                                                 new CheckDistance(AttackFarDistance, (int) BlackboardIds.PlayerTarget),
+                                                new Wait(CooldownFarDistance),
                                                 new CallSystemAction((int) BlackboardIds.AttackFarDistance),
+                                                new Wait(CooldownFarDistance * 0.6f),
                                             }
                                         ),
-                                        new Sequence(new List<Node>()
+                                        new MemorySequence(new List<Node>()
                                             {
                                                 new CallSystemActionMemory((int) BlackboardIds.PlayerIsOnBack),
                                                 new CheckDistance(AttackBehindDistance, (int) BlackboardIds.PlayerTarget),
+                                                new Wait(CooldownBehindDistance),
                                                 new CallSystemAction((int) BlackboardIds.AttackBehindDistance),
+                                                new Wait(CooldownBehindDistance * 0.6f),
                                             }
                                         ),
-                                        new Sequence(new List<Node>()
+                                        new MemorySequence(new List<Node>()
                                             {
                                                 new CheckDistance(AttackCloseDistance, (int) BlackboardIds.PlayerTarget),
+                                                new Wait(CooldownCloseDistance),
                                                 new CallSystemAction((int) BlackboardIds.AttackCloseDistance),
+                                                new Wait(CooldownBehindDistance * 0.6f),
                                             }
                                         ),
                                     }
                                 ),
-                                new Wait(AttackStag)
+                                new CallSystemAction((int) BlackboardIds.MoveToTarget),
                             }
                         ),
                     }),
                     new Sequence(new List<Node>() // Flee
                     {
-                        new CheckBool((int) BlackboardIds.Test)
+                        new CheckBool((int) BlackboardIds.False)
                     }),
                     new MemorySequence(new List<Node>() // Roam
                     {
+                        new Inverter(new List<Node>()
+                        {
+                            new CheckDistance(EngageDistance * 1.2f, (int) BlackboardIds.PlayerTarget),
+                        }),
                         new CallSystemActionMemory((int) BlackboardIds.ReturnToPath),
                         new CallSystemActionMemory((int) BlackboardIds.WalkOnPath)
                     }),
@@ -113,7 +127,9 @@ namespace ActionBeat.Enemies
         {
             _player = FindObjectOfType<ZeldaLikeCharacter>();
 
-            _blackboard.Set((int) BlackboardIds.Test, false, _tree.id);
+            _blackboard.Set((int) BlackboardIds.False, false, _tree.id);
+            _blackboard.Set((int) BlackboardIds.True, true, _tree.id);
+
             _blackboard.Set((int) BlackboardIds.IsAngry, false, _tree.id);
 
             _blackboard.Set((int) BlackboardIds.PlayerTarget, _player.transform, _tree.id);
@@ -135,7 +151,8 @@ namespace ActionBeat.Enemies
             _isOnPath = false;
             _lastPathTime = _startTime;
 
-            Physics.Move(-transform.position + _player.transform.position);
+            var dir = _player.transform.position - transform.position;
+            Physics.Move(dir.normalized);
 
             transform.position = Physics.Position;
 
@@ -160,10 +177,11 @@ namespace ActionBeat.Enemies
             var t = (Time.time - _lastPathTime) / (dist / Physics.Speed);
 
             var pos = Path.GetPointOnCurve(t);
+            pos = _iniPos + new Vector3(pos.x, pos.y);
 
             var dir = -transform.position + pos;
 
-            Physics.Move(dir);
+            Physics.Move(dir.normalized);
 
             transform.position = Physics.Position;
 
@@ -247,7 +265,7 @@ namespace ActionBeat.Enemies
 
             var angle = Vector2.Angle(_dir, playerDir);
 
-            // Debug.Log("Angle: " + angle);
+//            Debug.Log("Angle: " + angle);
 
             if (angle < 15)
                 return NodeStates.Success;
@@ -274,7 +292,7 @@ namespace ActionBeat.Enemies
         private void Update()
         {
             if (_isDead) return;
-            
+
             _tree.Tick(this.gameObject, _blackboard);
         }
     }
