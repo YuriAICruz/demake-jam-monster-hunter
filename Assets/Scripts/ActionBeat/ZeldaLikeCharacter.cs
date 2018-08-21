@@ -26,17 +26,26 @@ namespace ActionBeat
         public Life Life;
         public Stamina Stamina;
 
-        private ZeldaLikeInputDispatcher InputDispatcher;
+        private ZeldaLikeInputDispatcher _inputDispatcher;
 
         private bool _isDodging;
         private bool _isJumping;
         private Collider2D _collider;
+        private int _mask;
         
         [Header("Attributes")]
 
-        public AttackAtributes OverheadSlashAtrib;
+        public AttackAtributes OverheadSlashAttrib;
+        public AttackAtributes RisingSlashAttrib;
+        public AttackAtributes ChargedSlashAttrib;
+        public AttackAtributes WideSlashAttrib;
+        public AttackAtributes TrueChargedSlashComboAttrib;
+        public AttackAtributes TrueChargedSlashComboFinalAttrib;
+        public AttackAtributes FowardLungingAttackComboAttrib;
+        public AttackAtributes FowardLungingAttackComboFinalAttrib;
+        public AttackAtributes StationaryComboAttrib;
+        public AttackAtributes StationaryComboFinalAttrib;
 
-        private int _mask;
 
         private void Awake()
         {
@@ -53,7 +62,6 @@ namespace ActionBeat
             _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
             
             _mask |= (1 << LayerMask.NameToLayer("Enemy"));
-            //Debug.Log((_mask & LayerMask.NameToLayer("Enemy")) == 0);
             
             _animationController = new AnimationController(transform, GetComponent<Animator>());
             
@@ -66,36 +74,36 @@ namespace ActionBeat
 
         private void OnEnable()
         {
-            if (InputDispatcher == null)
-                InputDispatcher = new ZeldaLikeInputDispatcher(this);
+            if (_inputDispatcher == null)
+                _inputDispatcher = new ZeldaLikeInputDispatcher(this);
 
-            InputDispatcher.OverheadSlash += OverheadSlash;
-            InputDispatcher.RisingSlash += RisingSlash;
-            InputDispatcher.ChargedSlash += ChargedSlash;
-            InputDispatcher.WideSlash += WideSlash;
-            InputDispatcher.TrueChargedSlashCombo += TrueChargedSlashCombo;
-            InputDispatcher.TrueChargedSlashComboFinal += TrueChargedSlashComboFinal;
-            InputDispatcher.FowardLungingAttackCombo += FowardLungingAttackCombo;
-            InputDispatcher.FowardLungingAttackComboFinal += FowardLungingAttackComboFinal;
-            InputDispatcher.StationaryCombo += StationaryCombo;
-            InputDispatcher.StationaryComboFinal += StationaryComboFinal;
-            InputDispatcher.Deffend += Deffend;
-            InputDispatcher.Dodge += Dodge;
-            InputDispatcher.LeftStick += Move;
+            _inputDispatcher.OverheadSlash += OverheadSlash;
+            _inputDispatcher.RisingSlash += RisingSlash;
+            _inputDispatcher.ChargedSlash += ChargedSlash;
+            _inputDispatcher.WideSlash += WideSlash;
+            _inputDispatcher.TrueChargedSlashCombo += TrueChargedSlashCombo;
+            _inputDispatcher.TrueChargedSlashComboFinal += TrueChargedSlashComboFinal;
+            _inputDispatcher.FowardLungingAttackCombo += FowardLungingAttackCombo;
+            _inputDispatcher.FowardLungingAttackComboFinal += FowardLungingAttackComboFinal;
+            _inputDispatcher.StationaryCombo += StationaryCombo;
+            _inputDispatcher.StationaryComboFinal += StationaryComboFinal;
+            _inputDispatcher.Deffend += Deffend;
+            _inputDispatcher.Dodge += Dodge;
+            _inputDispatcher.LeftStick += Move;
         }
 
         private void OnDisable()
         {
-            InputDispatcher.OverheadSlash -= OverheadSlash;
-            InputDispatcher.RisingSlash -= RisingSlash;
-            InputDispatcher.ChargedSlash -= ChargedSlash;
-            InputDispatcher.WideSlash -= WideSlash;
-            InputDispatcher.TrueChargedSlashCombo -= TrueChargedSlashCombo;
-            InputDispatcher.FowardLungingAttackCombo -= FowardLungingAttackCombo;
-            InputDispatcher.StationaryCombo -= StationaryCombo;
-            InputDispatcher.Deffend -= Deffend;
-            InputDispatcher.Dodge -= Dodge;
-            InputDispatcher.LeftStick -= Move;
+            _inputDispatcher.OverheadSlash -= OverheadSlash;
+            _inputDispatcher.RisingSlash -= RisingSlash;
+            _inputDispatcher.ChargedSlash -= ChargedSlash;
+            _inputDispatcher.WideSlash -= WideSlash;
+            _inputDispatcher.TrueChargedSlashCombo -= TrueChargedSlashCombo;
+            _inputDispatcher.FowardLungingAttackCombo -= FowardLungingAttackCombo;
+            _inputDispatcher.StationaryCombo -= StationaryCombo;
+            _inputDispatcher.Deffend -= Deffend;
+            _inputDispatcher.Dodge -= Dodge;
+            _inputDispatcher.LeftStick -= Move;
         }
 
         private void Move(Vector2 dir)
@@ -160,42 +168,54 @@ namespace ActionBeat
         private void WideSlash()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("WideSlash");
+
+            DoAttack(WideSlashAttrib);
+            
             _animationController.WideSlash();
         }
 
         private void StationaryCombo()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("StationaryCombo");
+
+            DoAttack(StationaryComboAttrib);
+            
             _animationController.StationaryCombo();
         }
 
         private void FowardLungingAttackCombo()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("FowardLungingAttackCombo");
+
+            DoAttack(FowardLungingAttackComboAttrib);
+            
             _animationController.FowardLungingAttackCombo();
         }
 
         private void TrueChargedSlashCombo()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("TrueChargedSlashCombo");
+
+            DoAttack(TrueChargedSlashComboAttrib);
+            
             _animationController.TrueChargedSlashCombo();
         }
 
         private void ChargedSlash()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("ChargedSlash");
+
+            DoAttack(ChargedSlashAttrib);
+            
             _animationController.ChargedSlash();
         }
 
         private void RisingSlash()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("RisingSlash");
+
+            DoAttack(RisingSlashAttrib);
+            
             _animationController.RisingSlash();
         }
 
@@ -203,30 +223,35 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
-            DoAttack(OverheadSlashAtrib);
-
-            ConsoleDebug.Log("OverheadSlash");
+            DoAttack(OverheadSlashAttrib);
+            
             _animationController.OverheadSlash();
         }
 
         private void StationaryComboFinal()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("StationaryComboFinal");
+
+            DoAttack(StationaryComboFinalAttrib);
+            
             _animationController.StationaryComboFinal();
         }
 
         private void FowardLungingAttackComboFinal()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("FowardLungingAttackComboFinal");
+
+            DoAttack(FowardLungingAttackComboFinalAttrib);
+            
             _animationController.FowardLungingAttackComboFinal();
         }
 
         private void TrueChargedSlashComboFinal()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("TrueChargedSlashComboFinal");
+
+            DoAttack(TrueChargedSlashComboFinalAttrib);
+            
             _animationController.TrueChargedSlashComboFinal();
         }
 
@@ -247,16 +272,16 @@ namespace ActionBeat
 
         private void Dodge()
         {
-            if (InputDispatcher.IsDeffending || Physics.Velocity.magnitude <= 0)
+            if (_inputDispatcher.IsDeffending || Physics.Velocity.magnitude <= 0)
                 return;
 
             Stamina.DoAction(5);
 
-            InputDispatcher.BlockInputs();
+            _inputDispatcher.BlockInputs();
             _isDodging = true;
             Physics.Dodge(() => { transform.position = Physics.Position; }, () =>
             {
-                InputDispatcher.UnblockInputs();
+                _inputDispatcher.UnblockInputs();
                 _isDodging = false;
             });
             _animationController.Dodge(Physics.Velocity);
@@ -264,12 +289,12 @@ namespace ActionBeat
 
         private bool CanAttack()
         {
-            return !_isDodging && !_isJumping && !InputDispatcher.IsDeffending && !InputDispatcher.IsRunning;
+            return !_isDodging && !_isJumping && !_inputDispatcher.IsDeffending && !_inputDispatcher.IsRunning;
         }
 
         private bool CanDeffend()
         {
-            return !_isDodging && !_isJumping && !InputDispatcher.IsRunning;
+            return !_isDodging && !_isJumping && !_inputDispatcher.IsRunning;
         }
 
         private void Jump(Vector2 dir)
@@ -277,13 +302,13 @@ namespace ActionBeat
             if (Physics.Velocity.magnitude <= 0)
                 return;
 
-            InputDispatcher.BlockInputs();
+            _inputDispatcher.BlockInputs();
             _isJumping = true;
             _animationController.Jump(_isJumping);
 
             Physics.Jump(dir.normalized, () => { transform.position = Physics.Position; }, () =>
             {
-                InputDispatcher.UnblockInputs();
+                _inputDispatcher.UnblockInputs();
                 _isJumping = false;
                 _animationController.Jump(_isJumping);
             });

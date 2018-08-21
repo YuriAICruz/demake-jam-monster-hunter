@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 70240663328748068}
   - component: {fileID: 50040287336017180}
   - component: {fileID: 114011662066521080}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Character
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -120,11 +120,61 @@ MonoBehaviour:
     JumpTime: 0.2
   Life:
     Hp: 0
-    MaxHp: 1
+    MaxHp: 10
   Stamina:
     Stm: 0
     MaxStm: 10
     RecoveryRate: 2.5
+  OverheadSlashAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  RisingSlashAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  ChargedSlashAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  WideSlashAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  TrueChargedSlashComboAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  TrueChargedSlashComboFinalAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  FowardLungingAttackComboAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  FowardLungingAttackComboFinalAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  StationaryComboAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
+  StationaryComboFinalAttrib:
+    Damage: 1
+    Distance: 0.4
+    Duration: 0.4
+    IsRight: 0
 --- !u!212 &212691281515251020
 SpriteRenderer:
   m_ObjectHideFlags: 1
