@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using ActionBeat.Animation;
 using Debuging;
 using Physics;
@@ -17,26 +18,44 @@ namespace ActionBeat
         public int Damage;
         public float Distance, Duration;
         public bool IsRight;
+        public int StaminaCost;
     }
-    
+
     public class ZeldaLikeCharacter : MonoBehaviour, IDamageble
     {
-        public ZeldaLikePhysics Physics;
+        [Space] public ZeldaLikePhysics Physics;
         private AnimationController _animationController;
-        public Life Life;
-        public Stamina Stamina;
 
-        private ZeldaLikeInputDispatcher InputDispatcher;
+        public Action OnOpenMap, OnCloseMap;
+
+
+        [Space] public Life Life;
+        [SerializeField] private float _invencibilityDuration;
+        private float _lastHit;
+
+        [Space] public Stamina Stamina;
+
+        private ZeldaLikeInputDispatcher _inputDispatcher;
 
         private bool _isDodging;
         private bool _isJumping;
+        private bool _canInteract;
+        private bool _mapOpen;
         private Collider2D _collider;
-        
-        [Header("Attributes")]
-
-        public AttackAtributes OverheadSlashAtrib;
-
         private int _mask;
+
+        [Header("Attributes")] public AttackAtributes OverheadSlashAttrib;
+        public AttackAtributes RisingSlashAttrib;
+        public AttackAtributes ChargedSlashAttrib;
+        public AttackAtributes WideSlashAttrib;
+        public AttackAtributes TrueChargedSlashComboAttrib;
+        public AttackAtributes TrueChargedSlashComboFinalAttrib;
+        public AttackAtributes FowardLungingAttackComboAttrib;
+        public AttackAtributes FowardLungingAttackComboFinalAttrib;
+        public AttackAtributes StationaryComboAttrib;
+        public AttackAtributes StationaryComboFinalAttrib;
+        private IInteractible _interactible;
+
 
         private void Awake()
         {
@@ -45,18 +64,16 @@ namespace ActionBeat
 
             Stamina.Reset();
             Stamina.Stun += Stun;
-            
         }
 
-        void Start()
+        private void Start()
         {
             _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
-            
+
             _mask |= (1 << LayerMask.NameToLayer("Enemy"));
-            //Debug.Log((_mask & LayerMask.NameToLayer("Enemy")) == 0);
-            
+
             _animationController = new AnimationController(transform, GetComponent<Animator>());
-            
+
             Physics.SetPosition(transform.position);
             Physics.SetCollider(GetComponent<Collider2D>());
             Physics.OnCollisionEnter += OnCollided;
@@ -66,36 +83,40 @@ namespace ActionBeat
 
         private void OnEnable()
         {
-            if (InputDispatcher == null)
-                InputDispatcher = new ZeldaLikeInputDispatcher(this);
+            if (_inputDispatcher == null)
+                _inputDispatcher = new ZeldaLikeInputDispatcher(this);
 
-            InputDispatcher.OverheadSlash += OverheadSlash;
-            InputDispatcher.RisingSlash += RisingSlash;
-            InputDispatcher.ChargedSlash += ChargedSlash;
-            InputDispatcher.WideSlash += WideSlash;
-            InputDispatcher.TrueChargedSlashCombo += TrueChargedSlashCombo;
-            InputDispatcher.TrueChargedSlashComboFinal += TrueChargedSlashComboFinal;
-            InputDispatcher.FowardLungingAttackCombo += FowardLungingAttackCombo;
-            InputDispatcher.FowardLungingAttackComboFinal += FowardLungingAttackComboFinal;
-            InputDispatcher.StationaryCombo += StationaryCombo;
-            InputDispatcher.StationaryComboFinal += StationaryComboFinal;
-            InputDispatcher.Deffend += Deffend;
-            InputDispatcher.Dodge += Dodge;
-            InputDispatcher.LeftStick += Move;
+            _inputDispatcher.OverheadSlash += OverheadSlash;
+            _inputDispatcher.RisingSlash += RisingSlash;
+            _inputDispatcher.ChargedSlash += ChargedSlash;
+            _inputDispatcher.WideSlash += WideSlash;
+            _inputDispatcher.TrueChargedSlashCombo += TrueChargedSlashCombo;
+            _inputDispatcher.TrueChargedSlashComboFinal += TrueChargedSlashComboFinal;
+            _inputDispatcher.FowardLungingAttackCombo += FowardLungingAttackCombo;
+            _inputDispatcher.FowardLungingAttackComboFinal += FowardLungingAttackComboFinal;
+            _inputDispatcher.StationaryCombo += StationaryCombo;
+            _inputDispatcher.StationaryComboFinal += StationaryComboFinal;
+            _inputDispatcher.Deffend += Deffend;
+            _inputDispatcher.Dodge += Dodge;
+            _inputDispatcher.LeftStick += Move;
+            _inputDispatcher.Interact += Interact;
+            _inputDispatcher.MapToggle += MapToggle;
         }
 
         private void OnDisable()
         {
-            InputDispatcher.OverheadSlash -= OverheadSlash;
-            InputDispatcher.RisingSlash -= RisingSlash;
-            InputDispatcher.ChargedSlash -= ChargedSlash;
-            InputDispatcher.WideSlash -= WideSlash;
-            InputDispatcher.TrueChargedSlashCombo -= TrueChargedSlashCombo;
-            InputDispatcher.FowardLungingAttackCombo -= FowardLungingAttackCombo;
-            InputDispatcher.StationaryCombo -= StationaryCombo;
-            InputDispatcher.Deffend -= Deffend;
-            InputDispatcher.Dodge -= Dodge;
-            InputDispatcher.LeftStick -= Move;
+            _inputDispatcher.OverheadSlash -= OverheadSlash;
+            _inputDispatcher.RisingSlash -= RisingSlash;
+            _inputDispatcher.ChargedSlash -= ChargedSlash;
+            _inputDispatcher.WideSlash -= WideSlash;
+            _inputDispatcher.TrueChargedSlashCombo -= TrueChargedSlashCombo;
+            _inputDispatcher.FowardLungingAttackCombo -= FowardLungingAttackCombo;
+            _inputDispatcher.StationaryCombo -= StationaryCombo;
+            _inputDispatcher.Deffend -= Deffend;
+            _inputDispatcher.Dodge -= Dodge;
+            _inputDispatcher.LeftStick -= Move;
+            _inputDispatcher.Interact -= Interact;
+            _inputDispatcher.MapToggle -= MapToggle;
         }
 
         private void Move(Vector2 dir)
@@ -110,20 +131,20 @@ namespace ActionBeat
             StartCoroutine(Attack(attrib.Damage, attrib.Distance, attrib.Duration, attrib.IsRight));
         }
 
-        IEnumerator Attack(int damage,float size, float duration, bool isRight)
+        IEnumerator Attack(int damage, float size, float duration, bool isRight)
         {
             var dir = (_animationController.Direction.normalized * size).Rotate(isRight ? 20 : -20);
             Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
 
             var hit = Physics2D.Raycast(transform.position, dir, size, _mask);
-            
+
             var hited = CheckAndDoDamage(damage, hit);
-            
+
             yield return new WaitForSeconds(duration / 2);
-            
-             dir = (_animationController.Direction.normalized * size);
+
+            dir = (_animationController.Direction.normalized * size);
             Debug.DrawRay(transform.position, dir, Color.red, 0.6f);
-            
+
             if (!hited)
             {
                 hit = Physics2D.Raycast(transform.position, dir, size, _mask);
@@ -159,43 +180,69 @@ namespace ActionBeat
 
         private void WideSlash()
         {
+            if(_canInteract) return;
+            
             if (!CanAttack()) return;
-            ConsoleDebug.Log("WideSlash");
+
+            if (!Stamina.DoAction(WideSlashAttrib.StaminaCost)) return;
+            
+            DoAttack(WideSlashAttrib);
+
             _animationController.WideSlash();
         }
 
         private void StationaryCombo()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("StationaryCombo");
+
+            if (!Stamina.DoAction(StationaryComboAttrib.StaminaCost)) return;
+
+            DoAttack(StationaryComboAttrib);
+
             _animationController.StationaryCombo();
         }
 
         private void FowardLungingAttackCombo()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("FowardLungingAttackCombo");
+
+            if (!Stamina.DoAction(FowardLungingAttackComboAttrib.StaminaCost)) return;
+
+            DoAttack(FowardLungingAttackComboAttrib);
+
             _animationController.FowardLungingAttackCombo();
         }
 
         private void TrueChargedSlashCombo()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("TrueChargedSlashCombo");
+
+            if (!Stamina.DoAction(TrueChargedSlashComboAttrib.StaminaCost)) return;
+
+            DoAttack(TrueChargedSlashComboAttrib);
+
             _animationController.TrueChargedSlashCombo();
         }
 
         private void ChargedSlash()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("ChargedSlash");
+
+            if (!Stamina.DoAction(ChargedSlashAttrib.StaminaCost)) return;
+
+            DoAttack(ChargedSlashAttrib);
+
             _animationController.ChargedSlash();
         }
 
         private void RisingSlash()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("RisingSlash");
+
+            if (!Stamina.DoAction(RisingSlashAttrib.StaminaCost)) return;
+
+            DoAttack(RisingSlashAttrib);
+
             _animationController.RisingSlash();
         }
 
@@ -203,30 +250,43 @@ namespace ActionBeat
         {
             if (!CanAttack()) return;
 
-            DoAttack(OverheadSlashAtrib);
+            if (!Stamina.DoAction(OverheadSlashAttrib.StaminaCost)) return;
 
-            ConsoleDebug.Log("OverheadSlash");
+            DoAttack(OverheadSlashAttrib);
+
             _animationController.OverheadSlash();
         }
 
         private void StationaryComboFinal()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("StationaryComboFinal");
+
+            if (!Stamina.DoAction(StationaryComboFinalAttrib.StaminaCost)) return;
+
+            DoAttack(StationaryComboFinalAttrib);
+
             _animationController.StationaryComboFinal();
         }
 
         private void FowardLungingAttackComboFinal()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("FowardLungingAttackComboFinal");
+
+            if (!Stamina.DoAction(FowardLungingAttackComboFinalAttrib.StaminaCost)) return;
+
+            DoAttack(FowardLungingAttackComboFinalAttrib);
+
             _animationController.FowardLungingAttackComboFinal();
         }
 
         private void TrueChargedSlashComboFinal()
         {
             if (!CanAttack()) return;
-            ConsoleDebug.Log("TrueChargedSlashComboFinal");
+
+            if (!Stamina.DoAction(TrueChargedSlashComboFinalAttrib.StaminaCost)) return;
+
+            DoAttack(TrueChargedSlashComboFinalAttrib);
+
             _animationController.TrueChargedSlashComboFinal();
         }
 
@@ -237,26 +297,31 @@ namespace ActionBeat
         }
 
 
-        private void OnTriggered(RaycastHit2D obj)
+        private void OnTriggered(RaycastHit2D hit)
         {
+            _interactible = hit.transform.GetComponent<IInteractible>();
+            if(_interactible == null) return;
+
+            _canInteract = true;
         }
 
         private void OnCollided(RaycastHit2D obj)
         {
         }
+        
 
         private void Dodge()
         {
-            if (InputDispatcher.IsDeffending || Physics.Velocity.magnitude <= 0)
+            if (_inputDispatcher.IsDeffending || Physics.Velocity.magnitude <= 0)
                 return;
 
             Stamina.DoAction(5);
 
-            InputDispatcher.BlockInputs();
+            _inputDispatcher.BlockInputs();
             _isDodging = true;
             Physics.Dodge(() => { transform.position = Physics.Position; }, () =>
             {
-                InputDispatcher.UnblockInputs();
+                _inputDispatcher.UnblockInputs();
                 _isDodging = false;
             });
             _animationController.Dodge(Physics.Velocity);
@@ -264,12 +329,12 @@ namespace ActionBeat
 
         private bool CanAttack()
         {
-            return !_isDodging && !_isJumping && !InputDispatcher.IsDeffending && !InputDispatcher.IsRunning;
+            return !_isDodging && !_isJumping && !_inputDispatcher.IsDeffending && !_inputDispatcher.IsRunning;
         }
 
         private bool CanDeffend()
         {
-            return !_isDodging && !_isJumping && !InputDispatcher.IsRunning;
+            return !_isDodging && !_isJumping && !_inputDispatcher.IsRunning;
         }
 
         private void Jump(Vector2 dir)
@@ -277,13 +342,13 @@ namespace ActionBeat
             if (Physics.Velocity.magnitude <= 0)
                 return;
 
-            InputDispatcher.BlockInputs();
+            _inputDispatcher.BlockInputs();
             _isJumping = true;
             _animationController.Jump(_isJumping);
 
             Physics.Jump(dir.normalized, () => { transform.position = Physics.Position; }, () =>
             {
-                InputDispatcher.UnblockInputs();
+                _inputDispatcher.UnblockInputs();
                 _isJumping = false;
                 _animationController.Jump(_isJumping);
             });
@@ -299,8 +364,47 @@ namespace ActionBeat
             ConsoleDebug.LogError("Die");
         }
 
+        private void MapToggle()
+        {
+            if (_mapOpen)
+            {
+                OpenMap();
+                _mapOpen = false;
+            }
+            else
+            {
+                CloseMap();
+                _mapOpen = true;
+            }
+        }
+
+        private void OpenMap()
+        {
+            // _inputDispatcher.BlockInputs();
+            if (OnOpenMap != null) OnOpenMap();
+        }
+
+        private void CloseMap()
+        {
+            // _inputDispatcher.UnblockInputs();
+            if (OnCloseMap != null) OnCloseMap();
+        }
+
+        private void Interact()
+        {
+            if(!_canInteract || _interactible == null) return;
+            
+            _interactible.Interact();
+            _interactible = null;
+        }
+
+        
         public void DoDamage(int damage)
         {
+            if (_isDodging || Time.time <= _lastHit + _invencibilityDuration) return;
+
+            _lastHit = Time.time;
+
             Life.ReceiveDamage(damage);
         }
     }
