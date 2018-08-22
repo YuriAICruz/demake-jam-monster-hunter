@@ -368,12 +368,12 @@ namespace ActionBeat
         {
             if (_mapOpen)
             {
-                OpenMap();
+                CloseMap();
                 _mapOpen = false;
             }
             else
             {
-                CloseMap();
+                OpenMap();
                 _mapOpen = true;
             }
         }

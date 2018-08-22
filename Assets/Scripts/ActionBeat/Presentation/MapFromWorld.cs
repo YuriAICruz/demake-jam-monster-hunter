@@ -1,4 +1,5 @@
-﻿using UiGenerics;
+﻿using TMPro;
+using UiGenerics;
 using UnityEngine;
 
 namespace ActionBeat.Presentation
@@ -23,13 +24,15 @@ namespace ActionBeat.Presentation
 
         private void SetPosition()
         {
-            var pos = _limits.LeftBotton - Target.position Vector3.Dot( (_limits.RightTop - _limits.LeftBotton);
-            pos.z = 0;
+            var pos = (-_limits.LeftBotton + Target.position);
+            var size = (_limits.RightTop - _limits.LeftBotton);
+            var relativePos = new Vector2(pos.x/size.x, pos.y/size.y);
+
+            var parentSize = transform.parent.GetComponent<RectTransform>().sizeDelta;
+            relativePos = relativePos * parentSize - parentSize/2;
             
-            pos *= new Vector2(475,300);
             
-            
-            transform.localPosition = pos;
+            transform.localPosition = relativePos;
         }
     }
 }
