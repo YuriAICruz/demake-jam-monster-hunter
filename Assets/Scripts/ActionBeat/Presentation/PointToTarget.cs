@@ -9,10 +9,19 @@ namespace ActionBeat.Presentation
         public Transform Origin;
         private Vector3 _iniPos;
         public float Distance;
+        private Vector2 _size;
+        private Vector3 _scale;
 
         void Setup()
         {
+        }
+
+        private void Start()
+        {
             _iniPos = transform.position;
+
+            _size = transform.parent.GetComponent<RectTransform>().sizeDelta;
+            _scale = transform.parent.localScale;
         }
 
         private void Update()
@@ -24,7 +33,7 @@ namespace ActionBeat.Presentation
             
             transform.eulerAngles = new Vector3(0,0,angle);
 
-            transform.position = _iniPos + dir.normalized * Distance;
+            transform.localPosition = dir.normalized * Distance;// * transform.parent.localScale.y;
         }
 
     }

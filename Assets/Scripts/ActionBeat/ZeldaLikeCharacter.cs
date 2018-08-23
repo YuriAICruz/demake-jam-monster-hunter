@@ -214,11 +214,11 @@ namespace ActionBeat
         }
 
         private void TrueChargedSlashCombo()
-        {
+        {            
             if (!CanAttack()) return;
 
             if (!Stamina.DoAction(TrueChargedSlashComboAttrib.StaminaCost)) return;
-
+            
             DoAttack(TrueChargedSlashComboAttrib);
 
             _animationController.TrueChargedSlashCombo();
@@ -284,7 +284,7 @@ namespace ActionBeat
             if (!CanAttack()) return;
 
             if (!Stamina.DoAction(TrueChargedSlashComboFinalAttrib.StaminaCost)) return;
-
+            
             DoAttack(TrueChargedSlashComboFinalAttrib);
 
             _animationController.TrueChargedSlashComboFinal();

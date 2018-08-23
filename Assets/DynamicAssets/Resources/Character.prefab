@@ -124,10 +124,10 @@ MonoBehaviour:
   _invencibilityDuration: 0.8
   Stamina:
     Stm: 0
-    MaxStm: 10
+    MaxStm: 12
     RecoveryRate: 2.5
   OverheadSlashAttrib:
-    Damage: 1
+    Damage: 2
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
@@ -139,11 +139,11 @@ MonoBehaviour:
     IsRight: 0
     StaminaCost: 1
   ChargedSlashAttrib:
-    Damage: 1
+    Damage: 6
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
-    StaminaCost: 1
+    StaminaCost: 3
   WideSlashAttrib:
     Damage: 1
     Distance: 0.4
@@ -151,17 +151,17 @@ MonoBehaviour:
     IsRight: 0
     StaminaCost: 1
   TrueChargedSlashComboAttrib:
-    Damage: 1
+    Damage: 6
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
-    StaminaCost: 1
+    StaminaCost: 3
   TrueChargedSlashComboFinalAttrib:
-    Damage: 1
+    Damage: 10
     Distance: 0.4
     Duration: 0.4
     IsRight: 0
-    StaminaCost: 1
+    StaminaCost: 6
   FowardLungingAttackComboAttrib:
     Damage: 1
     Distance: 0.4
@@ -221,7 +221,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 50
-  m_Sprite: {fileID: 21300040, guid: 49f7e46cbf5e5aa4b8a5f66fff9df1da, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 98c94bdb9c2f15544b3019432e41d2dc, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

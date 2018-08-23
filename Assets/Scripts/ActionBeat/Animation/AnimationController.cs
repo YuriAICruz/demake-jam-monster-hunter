@@ -73,10 +73,10 @@ namespace ActionBeat.Animation
                 }
             }
 
-            if (velocity.x < 0)
-                _transform.localScale = new Vector3(-1, 1, 1);
-            else
-                _transform.localScale = new Vector3(1, 1, 1);
+//            if (velocity.x < 0)
+//                _transform.localScale = new Vector3(-1, 1, 1);
+//            else
+//                _transform.localScale = new Vector3(1, 1, 1);
 
             Direction = velocity;
             _animator.SetFloat("X", velocity.x);
