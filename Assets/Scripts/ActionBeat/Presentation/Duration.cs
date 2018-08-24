@@ -7,6 +7,8 @@ namespace ActionBeat.Presentation
     {
         private ActionGameManagement _manager;
         private float _startTime;
+        private float _endTime;
+        private bool _ended;
 
         void Setup()
         {
@@ -17,6 +19,13 @@ namespace ActionBeat.Presentation
             _manager = FindObjectOfType<ActionGameManagement>();
 
             _manager.StartGame += ResetTime;
+            _manager.EndGame += Endgame;
+            _manager.GameOver += Endgame;
+        }
+
+        private void Endgame()
+        {
+            _ended = true;
         }
 
         private void ResetTime()
@@ -26,7 +35,10 @@ namespace ActionBeat.Presentation
 
         private void Update()
         {
-            Text.text = (Time.time - _startTime).ToString("00.00");
+            if (!_ended)
+                _endTime = Time.time;
+            
+            Text.text = (_endTime - _startTime).ToString("00.00");
         }
     }
 }

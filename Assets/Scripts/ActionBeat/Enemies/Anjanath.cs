@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using ActionBeat.Animation;
 using Graphene.BehaviourTree;
 using Graphene.BehaviourTree.Actions;
 using Graphene.BehaviourTree.Composites;
@@ -17,6 +18,10 @@ namespace ActionBeat.Enemies
 {
     public class Anjanath : EnemyBase
     {
+        private bool _canPlaySteps;
+        public AudioClip StepsSound, AttackSound, HitSound, HoarSound;
+        private AudioSource _audioSource;
+        
         public AnjanathPhysics Physics;
 
         public Spline Path;
@@ -24,6 +29,8 @@ namespace ActionBeat.Enemies
         private float _startTime, _lastPathTime;
         private bool _loop;
         private bool _isOnPath = true;
+
+        private AnimationController _animationController;
 
         [Header("Attack Distance")] public float EngageDistance = 5;
 
@@ -44,6 +51,7 @@ namespace ActionBeat.Enemies
         private Vector3 _dir;
         private bool _isDead;
         private int _mask;
+        private bool _once;
 
         private event Behaviour.NodeResponseAction Test;
 
@@ -56,6 +64,9 @@ namespace ActionBeat.Enemies
             _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
 
             _mask |= (1 << LayerMask.NameToLayer("Player"));
+
+            _animationController = new AnimationController(transform, GetComponent<Animator>());
+            _audioSource = GetComponent<AudioSource>();
         }
 
         protected override void SetupPhysics()
@@ -68,6 +79,7 @@ namespace ActionBeat.Enemies
 
         protected override void Die()
         {
+            _animationController.Death();
             Invoke("EndGame", 2);
             _isDead = true;
         }
@@ -93,15 +105,6 @@ namespace ActionBeat.Enemies
                                 new MemoryPriority(
                                     new List<Node>
                                     {
-                                        new MemorySequence(new List<Node>() // FarDistance
-                                            {
-                                                new CheckBool((int) BlackboardIds.IsAngry),
-                                                new CheckDistance(AttackFarDistance, (int) BlackboardIds.PlayerTarget),
-                                                new Wait(FarCooldown),
-                                                new CallSystemAction((int) BlackboardIds.AttackFarDistance),
-                                                new Wait(FarAtributes.Duration),
-                                            }
-                                        ),
                                         new MemorySequence(new List<Node>() // BehindDistance
                                             {
                                                 new CallSystemActionMemory((int) BlackboardIds.PlayerIsOnBack),
@@ -117,6 +120,15 @@ namespace ActionBeat.Enemies
                                                 new Wait(CloseCooldown),
                                                 new CallSystemAction((int) BlackboardIds.AttackCloseDistance),
                                                 new Wait(CloseAtributes.Duration),
+                                            }
+                                        ),
+                                        new MemorySequence(new List<Node>() // FarDistance
+                                            {
+                                                new CheckBool((int) BlackboardIds.IsAngry),
+                                                new CheckDistance(AttackFarDistance, (int) BlackboardIds.PlayerTarget),
+                                                new Wait(FarCooldown),
+                                                new CallSystemAction((int) BlackboardIds.AttackFarDistance),
+                                                new Wait(FarAtributes.Duration),
                                             }
                                         ),
                                     }
@@ -175,6 +187,7 @@ namespace ActionBeat.Enemies
             Physics.Move(dir.normalized);
 
             transform.position = Physics.Position;
+            _animationController.SetVelocity(Physics.Velocity);
 
             LookTo();
 
@@ -194,21 +207,30 @@ namespace ActionBeat.Enemies
                 return NodeStates.Success;
 
             var dist = Path.Distance();
-            var t = (Time.time - _lastPathTime) / (dist / Physics.Speed);
+            var t = (Time.time - _startTime) / (dist / Physics.Speed);
 
             var pos = Path.GetPointOnCurve(t);
             pos = _iniPos + new Vector3(pos.x, pos.y);
+            
+//            var pldist = _player.transform.position - transform.position;
+//            if (pldist.magnitude >= 6)
+//            {
+//                _isOnPath = true;
+//                transform.position = pos;
+//                return NodeStates.Success;
+//            }
 
             var dir = -transform.position + pos;
 
-            Physics.Move(dir.normalized);
+            // Physics.Move(dir.normalized);
 
-            transform.position = Physics.Position;
+            transform.position += dir.normalized * Physics.Speed * 1.8f * Time.deltaTime;
+            _animationController.SetVelocity( dir.normalized);
 
             if ((pos - transform.position).magnitude < 0.2f)
             {
                 _isOnPath = true;
-                _startTime = Time.time - (_lastPathTime - _startTime);
+                _startTime = Time.time - (Time.time - _startTime);
             }
 
             LookTo();
@@ -232,6 +254,8 @@ namespace ActionBeat.Enemies
 
                 transform.position = _iniPos + new Vector3(pos.x, pos.y);
 
+                _animationController.SetVelocity(pos - _iniPos);
+
                 LookTo();
 
                 Physics.SetPosition(transform.position);
@@ -249,10 +273,12 @@ namespace ActionBeat.Enemies
         private void LookTo()
         {
             _dir = GetDirection();
+//
+//            var rotZ = Mathf.Atan2(_dir.y, _dir.x) * Mathf.Rad2Deg;
+            
+            _animationController.SetVelocity(-_dir);
 
-            var rotZ = Mathf.Atan2(_dir.y, _dir.x) * Mathf.Rad2Deg;
-
-            transform.rotation = Quaternion.Euler(0f, 0f, rotZ + 180);
+//            transform.rotation = Quaternion.Euler(0f, 0f, rotZ + 180);
         }
 
         private Vector3 GetDirection()
@@ -316,15 +342,23 @@ namespace ActionBeat.Enemies
 
         IEnumerator DoAttackCloseDistanceRoutine()
         {
+            _canPlaySteps = false;
+            _audioSource.clip = AttackSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
+            
             var dir = (_lastPlayerPos - transform.position).normalized;
             var time = 0f;
 
             RaycastHit2D hit;
 
+            _animationController.CloseDistanceAttack();
+
             while (time <= CloseAtributes.Duration)
             {
                 Physics.Move(dir * (CloseAtributes.Distance / CloseAtributes.Duration));
                 transform.position = Physics.Position;
+                _animationController.SetVelocity(Physics.Velocity);
 
                 hit = Physics2D.Raycast(transform.position, dir, CloseAtributes.Distance * (time / CloseAtributes.Duration), _mask);
                 CheckAndDoDamage(CloseAtributes.Damage, hit);
@@ -344,26 +378,35 @@ namespace ActionBeat.Enemies
 
         IEnumerator DoAttackBehindDistanceRoutine()
         {
+            _canPlaySteps = false;
+            _audioSource.clip = AttackSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
+            
             var dir = _dir.normalized;
             var time = 0f;
-            var dur = BehindAtributes.Duration / 2 - BehindCooldown / 4;
+            var dur = BehindAtributes.Duration - BehindCooldown / 2;// / 2 - BehindCooldown / 4;
+
+            _animationController.BehindDistanceAttack();
 
             RaycastHit2D hit;
-            while (time <= dur)
-            {
-                var sin = Mathf.Sin((time / dur) * Mathf.PI);
-                var modir = new Vector2(dir.x, dir.y).Rotate(60 + sin * 20 - 10f);
-
-                Debug.DrawRay(transform.position, modir * BehindAtributes.Distance, Color.magenta, 1);
-                hit = Physics2D.Raycast(transform.position, modir, BehindAtributes.Distance, _mask);
-                CheckAndDoDamage(BehindAtributes.Damage, hit);
-
-                yield return new WaitForChangedResult();
-                time += Time.deltaTime;
-            }
-
+//            while (time <= dur)
+//            {
+//                var sin = Mathf.Sin((time / dur) * Mathf.PI);
+//                var modir = new Vector2(dir.x, dir.y).Rotate(60 + sin * 20 - 10f);
+//
+//                Debug.DrawRay(transform.position, modir * BehindAtributes.Distance, Color.magenta, 1);
+//                hit = Physics2D.Raycast(transform.position, modir, BehindAtributes.Distance, _mask);
+//                CheckAndDoDamage(BehindAtributes.Damage, hit);
+//
+//                yield return new WaitForChangedResult();
+//                time += Time.deltaTime;
+//            }
+//
+//            yield return new WaitForSeconds(BehindCooldown / 2);
+//            time = 0f;
+            PlayHoar();
             yield return new WaitForSeconds(BehindCooldown / 2);
-            time = 0f;
 
             while (time <= dur)
             {
@@ -377,12 +420,13 @@ namespace ActionBeat.Enemies
                 yield return new WaitForChangedResult();
                 time += Time.deltaTime;
             }
-            
+
             var todir = -transform.position + _lastPlayerPos;
 
             Physics.Move(dir.normalized);
 
             transform.position = Physics.Position;
+            _animationController.SetVelocity(Physics.Velocity);
 
             LookTo();
 
@@ -396,30 +440,38 @@ namespace ActionBeat.Enemies
 
         IEnumerator DoAttackFarDistanceRoutine()
         {
+            _canPlaySteps = false;
+            _audioSource.clip = AttackSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
+            
+            PlayHoar();
+            
             var dir = (_player.transform.position - transform.position).normalized;
             _lastPlayerPos = _player.transform.position;
-            
+
             LookTo();
 
+            _animationController.FarDistanceAttack();
+
             _lastPos = transform.position;
-            
+
             var time = 0f;
             RaycastHit2D hit;
-            
+
             while (time <= FarAtributes.Duration)
             {
                 Physics.Move(dir * (FarAtributes.Distance / FarAtributes.Duration));
                 transform.position = Physics.Position;
+                _animationController.SetVelocity(Physics.Velocity);
 
                 yield return new WaitForChangedResult();
                 time += Time.deltaTime;
             }
-            
+
             hit = Physics2D.Raycast(transform.position, dir, FarAtributes.Distance, _mask);
             CheckAndDoDamage(FarAtributes.Damage, hit);
-            
-            _blackboard.Set((int) BlackboardIds.IsAngry, false, _tree.id);
-            
+
             yield return new WaitForChangedResult();
         }
 
@@ -433,16 +485,39 @@ namespace ActionBeat.Enemies
         public override void DoDamage(int damage)
         {
             base.DoDamage(damage);
+            
+            _canPlaySteps = false;
+            _audioSource.clip = HoarSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
 
-            if (Life.Hp / (float)Life.MaxHp < 0.6f)
+            if (!_once && Life.Hp / (float) Life.MaxHp < 0.6f)
             {
-                _blackboard.Set((int) BlackboardIds.IsAngry, true, _tree.id);
+                _once = true;
                 Hoar();
             }
         }
 
+        void PlayHoar()
+        {
+            _canPlaySteps = false;
+            _audioSource.clip = HoarSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
+            
+        }
+
         private void Hoar()
         {
+            PlayHoar();
+            _blackboard.Set((int) BlackboardIds.IsAngry, true, _tree.id);
+
+            Physics.Speed *= 1.2f;
+
+            _audioSource.pitch = 0.4f;
+
+            _animationController.Hoar();
+            
             Debug.Log("Hoar");
         }
     }

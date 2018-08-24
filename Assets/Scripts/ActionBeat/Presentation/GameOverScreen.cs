@@ -17,7 +17,7 @@ namespace ActionBeat.Presentation
             _manager = FindObjectOfType<ActionGameManagement>();
 
             _manager.StartGame += Hide;
-            _manager.EndGame += Show;
+            _manager.GameOver += Show;
         }
     }
 }

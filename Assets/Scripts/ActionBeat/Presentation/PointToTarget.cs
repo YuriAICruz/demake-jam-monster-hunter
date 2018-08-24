@@ -28,6 +28,12 @@ namespace ActionBeat.Presentation
         {
             var dir = Target.position - Origin.position;
             var distance = dir.magnitude;
+            
+            if (distance < 4)
+            {
+                transform.localPosition = Vector3.right * -99999 * Distance; 
+                return;
+            }
 
             var angle = Vector2.Angle(Vector2.up, dir.normalized);
             

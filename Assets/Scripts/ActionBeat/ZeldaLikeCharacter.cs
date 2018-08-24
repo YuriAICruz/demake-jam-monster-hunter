@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.SymbolStore;
 using ActionBeat.Animation;
+using ActionBeat.Enemies;
 using Debuging;
 using Physics;
 using Shooter;
@@ -24,9 +25,14 @@ namespace ActionBeat
 
     public class ZeldaLikeCharacter : MonoBehaviour, IDamageble
     {
+        private bool _canPlaySteps;
+        public AudioClip StepsSound, AttackSound, HitSound;
+        
+        private AudioSource _audioSource;
+        
         [Space] public ZeldaLikePhysics Physics;
         private AnimationController _animationController;
-
+        
         public Action OnOpenMap, OnCloseMap;
 
 
@@ -58,6 +64,9 @@ namespace ActionBeat
         private IInteractible _interactible;
         private ActionGameManagement _manager;
 
+        private Anjanath _anjanath;
+        private float _lastRecover;
+
 
         private void Awake()
         {
@@ -66,11 +75,15 @@ namespace ActionBeat
 
             Stamina.Reset();
             Stamina.Stun += Stun;
+
+            _audioSource = GetComponent<AudioSource>();
         }
 
         private void Start()
         {
             _mask = Physics2D.GetLayerCollisionMask(gameObject.layer);
+
+            _anjanath = FindObjectOfType<Anjanath>();
 
             _mask |= (1 << LayerMask.NameToLayer("Enemy"));
 
@@ -127,6 +140,24 @@ namespace ActionBeat
             Physics.Move(dir);
             _animationController.SetVelocity(Physics.Velocity);
             transform.position = Physics.Position;
+
+            if (_canPlaySteps && dir.magnitude > 0)
+            {
+                _canPlaySteps = false;
+                _audioSource.clip = StepsSound;
+                _audioSource.loop = true;
+                _audioSource.Play();
+            }
+            else if(!_canPlaySteps)
+            {
+                _canPlaySteps = true;
+            }
+
+            if ((transform.position - _anjanath.transform.position).magnitude > 10 && Life.Hp < Life.MaxHp && Time.time - _lastRecover > 1)
+            {
+                _lastRecover = Time.time;
+                Life.ReceiveDamage(-1);
+            }
         }
 
         void DoAttack(AttackAtributes attrib)
@@ -142,6 +173,11 @@ namespace ActionBeat
             var hit = Physics2D.Raycast(transform.position, dir, size, _mask);
 
             var hited = CheckAndDoDamage(damage, hit);
+            
+            _canPlaySteps = false;
+            _audioSource.clip = AttackSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
 
             yield return new WaitForSeconds(duration / 2);
 
@@ -183,12 +219,12 @@ namespace ActionBeat
 
         private void WideSlash()
         {
-            if(_canInteract) return;
-            
+            if (_canInteract) return;
+
             if (!CanAttack()) return;
 
             if (!Stamina.DoAction(WideSlashAttrib.StaminaCost)) return;
-            
+
             DoAttack(WideSlashAttrib);
 
             _animationController.WideSlash();
@@ -217,11 +253,11 @@ namespace ActionBeat
         }
 
         private void TrueChargedSlashCombo()
-        {            
+        {
             if (!CanAttack()) return;
 
             if (!Stamina.DoAction(TrueChargedSlashComboAttrib.StaminaCost)) return;
-            
+
             DoAttack(TrueChargedSlashComboAttrib);
 
             _animationController.TrueChargedSlashCombo();
@@ -287,7 +323,7 @@ namespace ActionBeat
             if (!CanAttack()) return;
 
             if (!Stamina.DoAction(TrueChargedSlashComboFinalAttrib.StaminaCost)) return;
-            
+
             DoAttack(TrueChargedSlashComboFinalAttrib);
 
             _animationController.TrueChargedSlashComboFinal();
@@ -303,7 +339,7 @@ namespace ActionBeat
         private void OnTriggered(RaycastHit2D hit)
         {
             _interactible = hit.transform.GetComponent<IInteractible>();
-            if(_interactible == null) return;
+            if (_interactible == null) return;
 
             _canInteract = true;
         }
@@ -311,7 +347,7 @@ namespace ActionBeat
         private void OnCollided(RaycastHit2D obj)
         {
         }
-        
+
 
         private void Dodge()
         {
@@ -359,20 +395,24 @@ namespace ActionBeat
 
         private void Stun()
         {
-            ConsoleDebug.LogError("Stun");
+//            ConsoleDebug.LogError("Stun");
         }
 
         private void Die()
         {
+            _inputDispatcher.BlockInputs();
             Invoke("GameOver", 1);
-            
-            ConsoleDebug.LogError("Die");
+            _animationController.Death();
         }
 
         void GameOver()
         {
-            _manager.GameOver();
-            Invoke("Reload", 1);
+            if (_manager == null)
+                _manager = FindObjectOfType<ActionGameManagement>();
+            
+            if (_manager.GameOver != null) _manager.GameOver();
+            
+            Invoke("Reload", 20);
         }
 
         void Reload()
@@ -408,16 +448,21 @@ namespace ActionBeat
 
         private void Interact()
         {
-            if(!_canInteract || _interactible == null) return;
-            
+            if (!_canInteract || _interactible == null) return;
+
             _interactible.Interact();
             _interactible = null;
         }
 
-        
+
         public void DoDamage(int damage)
         {
             if (_isDodging || Time.time <= _lastHit + _invencibilityDuration) return;
+            
+            _canPlaySteps = false;
+            _audioSource.clip = HitSound;
+            _audioSource.loop = false;
+            _audioSource.Play();
 
             _lastHit = Time.time;
 

@@ -51,7 +51,7 @@ namespace ActionBeat.Animation
             velocity *= 100;
 
             var dir = GetDir(velocity);
-            
+
             _animator.SetFloat("Speed", velocity.magnitude);
 
             if (velocity.magnitude == 0)
@@ -147,6 +147,31 @@ namespace ActionBeat.Animation
         public void Jump(bool isOn)
         {
             _animator.SetBool("Jump", isOn);
+        }
+
+        public void CloseDistanceAttack()
+        {
+            _animator.SetTrigger("AttackClose");
+        }
+
+        public void BehindDistanceAttack()
+        {
+            _animator.SetTrigger("AttackBehind");
+        }
+
+        public void FarDistanceAttack()
+        {
+            _animator.SetTrigger("AttackClose");
+        }
+
+        public void Death()
+        {
+            _animator.SetTrigger("Death");
+        }
+
+        public void Hoar()
+        {
+            _animator.SetTrigger("Roar");
         }
     }
 }

@@ -1,0 +1,356 @@
+fileFormatVersion: 2
+guid: 95bc7e3167a0de040890962e3e4caf19
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: playersheetOG_0
+    21300002: playersheetOG_1
+    21300004: playersheetOG_2
+    21300006: playersheetOG_3
+    21300008: playersheetOG_4
+    21300010: playersheetOG_5
+    21300012: playersheetOG_6
+    21300014: playersheetOG_7
+    21300016: playersheetOG_8
+    21300018: playersheetOG_9
+    21300020: playersheetOG_10
+    21300022: playersheetOG_11
+    21300024: playersheetOG_12
+    21300026: playersheetOG_13
+    21300028: playersheetOG_14
+    21300030: playersheetOG_15
+    21300032: playersheetOG_16
+    21300034: playersheetOG_17
+    21300036: playersheetOG_18
+    21300038: playersheetOG_19
+    21300040: playersheetOG_20
+    21300042: playersheetOG_21
+    21300044: playersheetOG_22
+    21300046: playersheetOG_23
+    21300048: playersheetOG_24
+    21300050: playersheetOG_25
+    21300052: playersheetOG_26
+    21300054: playersheetOG_27
+    21300056: playersheetOG_28
+    21300058: playersheetOG_29
+    21300060: playersheetOG_30
+    21300062: playersheetOG_31
+    21300064: playersheetOG_32
+    21300066: playersheetOG_33
+    21300068: playersheetOG_34
+    21300070: playersheetOG_35
+    21300072: playersheetOG_36
+    21300074: playersheetOG_37
+    21300076: playersheetOG_38
+    21300078: playersheetOG_39
+    21300080: playersheetOG_40
+    21300082: playersheetOG_41
+    21300084: playersheetOG_42
+    21300086: playersheetOG_43
+    21300088: playersheetOG_44
+    21300090: playersheetOG_45
+    21300092: playersheetOG_46
+    21300094: playersheetOG_47
+    21300096: playersheetOG_48
+    21300098: playersheetOG_49
+    21300100: playersheetOG_50
+    21300102: playersheetOG_51
+    21300104: playersheetOG_52
+    21300106: playersheetOG_53
+    21300108: playersheetOG_54
+    21300110: playersheetOG_55
+    21300112: playersheetOG_56
+    21300114: playersheetOG_57
+    21300116: playersheetOG_58
+    21300118: playersheetOG_59
+    21300120: playersheetOG_60
+    21300122: playersheetOG_61
+    21300124: playersheetOG_62
+    21300126: playersheetOG_63
+    21300128: playersheetOG_64
+    21300130: playersheetOG_65
+    21300132: playersheetOG_66
+    21300134: playersheetOG_67
+    21300136: playersheetOG_68
+    21300138: playersheetOG_69
+    21300140: playersheetOG_70
+    21300142: playersheetOG_71
+    21300144: playersheetOG_72
+    21300146: playersheetOG_73
+    21300148: playersheetOG_74
+    21300150: playersheetOG_75
+    21300152: playersheetOG_76
+    21300154: playersheetOG_77
+    21300156: playersheetOG_78
+    21300158: playersheetOG_79
+    21300160: playersheetOG_80
+    21300162: playersheetOG_81
+    21300164: playersheetOG_82
+    21300166: playersheetOG_83
+    21300168: playersheetOG_84
+    21300170: playersheetOG_85
+    21300172: playersheetOG_86
+    21300174: playersheetOG_87
+    21300176: playersheetOG_88
+    21300178: playersheetOG_89
+    21300180: playersheetOG_90
+    21300182: playersheetOG_91
+    21300184: playersheetOG_92
+    21300186: playersheetOG_93
+    21300188: playersheetOG_94
+    21300190: playersheetOG_95
+    21300192: playersheetOG_96
+    21300194: playersheetOG_97
+    21300196: playersheetOG_98
+    21300198: playersheetOG_99
+    21300200: playersheetOG 1_5
+    21300202: playersheetOG 1_11
+    21300204: playersheetOG 1_17
+    21300206: playersheetOG 1_23
+    21300208: playersheetOG 1_30
+    21300210: playersheetOG 1_37
+  externalObjects: {}
+  serializedVersion: 6
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 60
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: playersheetOG 1_5
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 900
+        width: 80
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a36e3105e7a2c2347981599850a494e7
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: playersheetOG 1_11
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 840
+        width: 80
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e36db3e34fb5ab745981e385a038d310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: playersheetOG 1_17
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 780
+        width: 80
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 096910027a328344283b073fb662c5b9
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: playersheetOG 1_23
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 720
+        width: 80
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 40a42a91d95bf7c419d0b8580c938365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: playersheetOG 1_30
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 660
+        width: 80
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7f20ea79203aa1b47b9a5b447505607c
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: playersheetOG 1_37
+      rect:
+        serializedVersion: 2
+        x: 480
+        y: 600
+        width: 80
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: edf2fc40b29657b43898fdf6f6d9d578
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 78b8fa6780ab7c645bbb536a51c4af55
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+  spritePackingTag: 
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
