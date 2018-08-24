@@ -181,7 +181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Life:
     Hp: 0
-    MaxHp: 2
+    MaxHp: 100
   Physics:
     Speed: 0.6
     Velocity: {x: 0, y: 0}

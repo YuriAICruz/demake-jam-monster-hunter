@@ -8,6 +8,7 @@ using Physics;
 using Shooter;
 using Shooter.InputManage;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utils;
 
 namespace ActionBeat
@@ -55,6 +56,7 @@ namespace ActionBeat
         public AttackAtributes StationaryComboAttrib;
         public AttackAtributes StationaryComboFinalAttrib;
         private IInteractible _interactible;
+        private ActionGameManagement _manager;
 
 
         private void Awake()
@@ -73,6 +75,7 @@ namespace ActionBeat
             _mask |= (1 << LayerMask.NameToLayer("Enemy"));
 
             _animationController = new AnimationController(transform, GetComponent<Animator>());
+            _manager = FindObjectOfType<ActionGameManagement>();
 
             Physics.SetPosition(transform.position);
             Physics.SetCollider(GetComponent<Collider2D>());
@@ -361,7 +364,20 @@ namespace ActionBeat
 
         private void Die()
         {
+            Invoke("GameOver", 1);
+            
             ConsoleDebug.LogError("Die");
+        }
+
+        void GameOver()
+        {
+            _manager.GameOver();
+            Invoke("Reload", 1);
+        }
+
+        void Reload()
+        {
+            SceneManager.LoadScene(0);
         }
 
         private void MapToggle()

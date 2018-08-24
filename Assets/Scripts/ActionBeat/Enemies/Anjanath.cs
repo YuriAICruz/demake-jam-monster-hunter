@@ -68,8 +68,13 @@ namespace ActionBeat.Enemies
 
         protected override void Die()
         {
-            Debug.LogError("Die");
+            Invoke("EndGame", 2);
             _isDead = true;
+        }
+
+        void EndGame()
+        {
+            _manager.EndGame();
         }
 
         protected override void CreateBehaviour()

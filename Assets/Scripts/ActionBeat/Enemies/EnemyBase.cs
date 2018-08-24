@@ -33,6 +33,7 @@ namespace ActionBeat.Enemies
 
         protected Blackboard _blackboard;
         protected Behaviour _tree;
+        protected ActionGameManagement _manager;
 
         private void Awake()
         {
@@ -45,6 +46,8 @@ namespace ActionBeat.Enemies
         void Start()
         {
             _animationController = new AnimationController(transform, GetComponent<Animator>());
+            
+            _manager = FindObjectOfType<ActionGameManagement>();
             
             SetupPhysics();
             

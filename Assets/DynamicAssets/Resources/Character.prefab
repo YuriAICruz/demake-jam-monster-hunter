@@ -129,7 +129,7 @@ MonoBehaviour:
   OverheadSlashAttrib:
     Damage: 2
     Distance: 0.4
-    Duration: 0.4
+    Duration: 0.2
     IsRight: 0
     StaminaCost: 1
   RisingSlashAttrib:
@@ -141,7 +141,7 @@ MonoBehaviour:
   ChargedSlashAttrib:
     Damage: 6
     Distance: 0.4
-    Duration: 0.4
+    Duration: 0.3
     IsRight: 0
     StaminaCost: 3
   WideSlashAttrib:
@@ -153,7 +153,7 @@ MonoBehaviour:
   TrueChargedSlashComboAttrib:
     Damage: 6
     Distance: 0.4
-    Duration: 0.4
+    Duration: 0.3
     IsRight: 0
     StaminaCost: 3
   TrueChargedSlashComboFinalAttrib:
@@ -231,4 +231,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
