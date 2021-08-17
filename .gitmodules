@@ -1,6 +1,0 @@
-[submodule "Packages/multplayer-shooter"]
-	path = Packages/multplayer-shooter
-	url = git@github.com:YuriAICruz/unity-multplayer-shooter.git
-[submodule "Packages/behaviour-tree"]
-	path = Packages/behaviour-tree
-	url = git@github.com:YuriAICruz/Unity-Behaviour-Tree.git
